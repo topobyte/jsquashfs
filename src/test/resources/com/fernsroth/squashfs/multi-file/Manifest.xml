@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<squashfs-manifest>
+	<directory guid="0" mode="drwxr-xr-x" mtime="2006-07-07T23:23:40" uid="0">
+		<directory name="dir1" guid="0" mode="drwxr-xr-x" mtime="2006-07-07T23:23:40" uid="0">
+			<directory name="dir2" guid="0" mode="drwxr-xr-x" mtime="2006-07-07T23:23:40" uid="0">
+				<symbolic-link name="link-file" link="../test-dest" guid="0" mode="lrwxrwxrwx" mtime="2006-07-07T23:23:40" uid="0"/>
+			</directory>
+			<directory name="dir3" guid="0" mode="drwxr-xr-x" mtime="2006-07-07T23:23:40" uid="0">
+				<file file="dir3-file" guid="0" mode="-rw-r--r--" mtime="2006-07-07T23:23:46" name="dir3-file" uid="0"/>
+			</directory>
+		</directory>
+		<directory name="permissions" guid="0" mode="drwxr-xr-x" mtime="2006-07-07T23:23:40" uid="0">
+			<file name="f---------" mode="----------" guid="0" mtime="2006-07-07T23:23:46" uid="0" file="empty"/>
+			<file name="f------rwx" mode="-------rwx" guid="0" mtime="2006-07-07T23:23:46" uid="0" file="empty"/>
+			<file name="f---rwx---" mode="----rwx---" guid="0" mtime="2006-07-07T23:23:46" uid="0" file="empty"/>
+			<file name="f--x--x--x" mode="---x--x--x" guid="0" mtime="2006-07-07T23:23:46" uid="0" file="empty"/>
+			<file name="f-w--w--w-" mode="--w--w--w-" guid="0" mtime="2006-07-07T23:23:46" uid="0" file="empty"/>
+			<file name="fr--r--r--" mode="-r--r--r--" guid="0" mtime="2006-07-07T23:23:46" uid="0" file="empty"/>
+			<file name="frwx------" mode="-rwx------" guid="0" mtime="2006-07-07T23:23:46" uid="0" file="empty"/>
+		</directory>
+		<file file="root-file" guid="0" mode="-rw-r--r--" mtime="2006-07-07T23:23:46" name="root-file" uid="0"/>
+	</directory>
+</squashfs-manifest>

@@ -1,0 +1,37 @@
+mksquashfs: Creating little endian 3.0 filesystem on ../one-file.sfs, block size 65536.
+mksquashfs: File inode, file_size 11, start_block 77, blocks 0, fragment 0, offset 0, size 11
+mksquashfs: Created inode 0x0, type 2, uid 0, guid 255
+mksquashfs: file ./testfile, uncompressed size 11 bytes
+mksquashfs: Directory inode, file_size 25, start_block 0, offset 0, nlink 2
+mksquashfs: Created inode 0x20, type 1, uid 0, guid 255
+mksquashfs: Directory contents of inode 0x20
+mksquashfs: 	Start block 0x0, count 1
+mksquashfs: 		name testfile, inode offset 0x0, type 2
+mksquashfs: directory . inode 0x20
+mksquashfs: Writing fragment 0, uncompressed size 11, compressed size 11
+mksquashfs: Inode block @ 0, size 32828
+mksquashfs: Directory block @ 0, size 32790
+mksquashfs: write_fragment_table: fragments 1, frag_bytes 16, meta_blocks 1
+mksquashfs: write_fragment_table: fragment 0, start_block 77, size 16777227
+mksquashfs: sBlk->inode_table_start 0x82
+mksquashfs: sBlk->directory_table_start 0xc0
+mksquashfs: sBlk->fragment_table_start 0xea
+mksquashfs: Little endian filesystem, data block size 65536, uncompressed data, uncompressed metadata, uncompressed fragments
+mksquashfs: Filesystem size 0.24 Kbytes (0.00 Mbytes)
+mksquashfs: 	112.84% of uncompressed filesystem size (0.21 Kbytes)
+mksquashfs: Inode table size 62 bytes (0.06 Kbytes)
+mksquashfs: 	100.00% of uncompressed inode table size (62 bytes)
+mksquashfs: Directory table size 24 bytes (0.02 Kbytes)
+mksquashfs: 	100.00% of uncompressed directory table size (24 bytes)
+mksquashfs: Number of duplicate files found 0
+mksquashfs: Number of inodes 2
+mksquashfs: Number of files 1
+mksquashfs: Number of fragments 1
+mksquashfs: Number of symbolic links  0
+mksquashfs: Number of device nodes 0
+mksquashfs: Number of fifo nodes 0
+mksquashfs: Number of socket nodes 0
+mksquashfs: Number of directories 1
+mksquashfs: Number of uids 1
+mksquashfs: 	root (0)
+mksquashfs: Number of gids 0

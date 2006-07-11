@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<assembly>
+	<id>bin</id>
+	<formats>
+		<format>dir</format>
+	</formats>
+	<includeBaseDirectory>false</includeBaseDirectory>
+
+	<fileSets>
+		<fileSet>
+			<directory>src/main/shell/</directory>
+			<outputDirectory/>
+		</fileSet>
+	</fileSets>
+
+	<dependencySets>
+		<dependencySet>
+			<outputDirectory>lib</outputDirectory>
+		</dependencySet>
+	</dependencySets>
+
+</assembly>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<squashfs-manifest>
+	<directory guid="0" mode="drwxr-xr-x" mtime="2006-07-07T23:23:40" uid="0">
+		<file file="testfile" guid="0" mode="-rw-r--r--" mtime="2006-07-07T23:23:46" name="testfile" uid="0"/>
+	</directory>
+</squashfs-manifest>

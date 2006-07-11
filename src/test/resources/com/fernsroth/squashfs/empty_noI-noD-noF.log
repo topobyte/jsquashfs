@@ -1,0 +1,30 @@
+Creating little endian 3.0 filesystem on ../empty.sfs, block size 65536.
+mksquashfs: Directory inode, file_size 3, start_block 0, offset 0, nlink 2
+mksquashfs: Created inode 0x0, type 1, uid 0, guid 255
+mksquashfs: Directory contents of inode 0x0
+mksquashfs: directory . inode 0x0
+mksquashfs: Inode block @ 0, size 32796
+mksquashfs: write_fragment_table: fragments 0, frag_bytes 0, meta_blocks 0
+mksquashfs: sBlk->inode_table_start 0x77
+mksquashfs: sBlk->directory_table_start 0x95
+mksquashfs: sBlk->fragment_table_start 0x95
+
+Little endian filesystem, data block size 65536, uncompressed data, uncompressed metadata, uncompressed fragments
+Filesystem size 0.15 Kbytes (0.00 Mbytes)
+	101.32% of uncompressed filesystem size (0.15 Kbytes)
+Inode table size 30 bytes (0.03 Kbytes)
+	100.00% of uncompressed inode table size (30 bytes)
+Directory table size 0 bytes (0.00 Kbytes)
+	nan% of uncompressed directory table size (0 bytes)
+Number of duplicate files found 0
+Number of inodes 1
+Number of files 0
+Number of fragments 0
+Number of symbolic links  0
+Number of device nodes 0
+Number of fifo nodes 0
+Number of socket nodes 0
+Number of directories 1
+Number of uids 1
+	root (0)
+Number of gids 0
