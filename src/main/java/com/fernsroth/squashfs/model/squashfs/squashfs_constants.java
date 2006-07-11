@@ -226,22 +226,22 @@ public final class squashfs_constants {
 	/**
 	 * see squashfs_fs.h.
 	 */
-	public static final long SQUASHFS_INVALID = ((long) 0xffffffffffffL);
+	public static final long SQUASHFS_INVALID = 0xffffffffffffL;
 
 	/**
 	 * see squashfs_fs.h.
 	 */
-	public static final long SQUASHFS_INVALID_FRAG = ((long) 0xffffffff);
+	public static final long SQUASHFS_INVALID_FRAG = 0xffffffffL;
 
 	/**
 	 * see squashfs_fs.h.
 	 */
-	public static final long SQUASHFS_INVALID_BLK = ((long) -1);
+	public static final long SQUASHFS_INVALID_BLK = -1;
 
 	/**
 	 * see squashfs_fs.h.
 	 */
-	public static final long SQUASHFS_USED_BLK = ((long) -2);
+	public static final long SQUASHFS_USED_BLK = -2;
 
 	/**
 	 * see squashfs_fs.h.

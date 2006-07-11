@@ -298,8 +298,8 @@ public final class SquashFSReader {
 
 		int blocks;
 
-		long frag_bytes = inode.fragment == squashfs_constants.SQUASHFS_INVALID_FRAG ? 0
-				: inode.file_size % this.superBlock.block_size;
+		long frag_bytes = (inode.fragment == squashfs_constants.SQUASHFS_INVALID_FRAG) ? 0
+				: (inode.file_size % this.superBlock.block_size);
 		offset = inode.offset;
 		blocks = (int) (inode.fragment == squashfs_constants.SQUASHFS_INVALID_FRAG ? (inode.file_size
 				+ this.superBlock.block_size - 1) >> this.superBlock.block_log
