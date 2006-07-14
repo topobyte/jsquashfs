@@ -41,7 +41,8 @@ public class FileSystemDataProvider implements DataProvider {
      */
     public IRandomAccessSource getData(Manifest source, BaseFile bf)
             throws IOException {
-        if (bf instanceof SFSSourceFile) {
+        if (bf instanceof SFSSourceFile
+                && ((SFSSourceFile) bf).getSourceFile() != null) {
             return new EasyIORandomAccessFile(((SFSSourceFile) bf)
                     .getSourceFile(), "r");
         } else {

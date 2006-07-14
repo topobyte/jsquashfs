@@ -24,6 +24,16 @@ import com.fernsroth.squashfs.model.Manifest;
 public class SquashFSManifest {
 
     /**
+     * the sax parser factory.
+     */
+    private static SAXParserFactory factory;
+
+    static {
+        factory = SAXParserFactory.newInstance();
+        factory.setValidating(true);
+    }
+
+    /**
      * loads a manifest file.
      * @param manifestInput the manifest input. 
      * @param rootDirectory the root directory.
@@ -34,7 +44,6 @@ public class SquashFSManifest {
     public static Manifest load(InputStream manifestInput, File rootDirectory)
             throws SquashFSException, IOException {
         try {
-            SAXParserFactory factory = SAXParserFactory.newInstance();
             SAXParser parser = factory.newSAXParser();
             ManifestSAXHandler manifestHandler = new ManifestSAXHandler(
                     rootDirectory);

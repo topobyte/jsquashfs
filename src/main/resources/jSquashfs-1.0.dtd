@@ -1,0 +1,27 @@
+
+<!ELEMENT squashfs-manifest (root-directory)>
+
+<!ELEMENT root-directory (directory | file | symbolic-link)*>
+<!ATTLIST root-directory guid CDATA "0">
+<!ATTLIST root-directory uid CDATA "0">
+<!ATTLIST root-directory mode CDATA #REQUIRED>
+
+<!ELEMENT directory (directory | file | symbolic-link)*>
+<!ATTLIST directory name CDATA #REQUIRED>
+<!ATTLIST directory guid CDATA "0">
+<!ATTLIST directory uid CDATA "0">
+<!ATTLIST directory mode CDATA #REQUIRED>
+
+<!ELEMENT file (#PCDATA)>
+<!ATTLIST file name CDATA #REQUIRED>
+<!ATTLIST file file CDATA #IMPLIED>
+<!ATTLIST file guid CDATA "0">
+<!ATTLIST file uid CDATA "0">
+<!ATTLIST file mode CDATA #REQUIRED>
+
+<!ELEMENT symbolic-link (#PCDATA)>
+<!ATTLIST symbolic-link name CDATA #REQUIRED>
+<!ATTLIST symbolic-link link CDATA #REQUIRED>
+<!ATTLIST symbolic-link guid CDATA "0">
+<!ATTLIST symbolic-link uid CDATA "0">
+<!ATTLIST symbolic-link mode CDATA #REQUIRED>

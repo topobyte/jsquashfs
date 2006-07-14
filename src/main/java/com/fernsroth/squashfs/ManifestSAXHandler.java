@@ -4,11 +4,13 @@
 package com.fernsroth.squashfs;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.Stack;
 
 import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -55,6 +57,19 @@ public class ManifestSAXHandler extends DefaultHandler {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public InputSource resolveEntity(String publicId, String systemId)
+            throws IOException, SAXException {
+        if (publicId.equals("-//Fersroth//DTD jSquashFSManifest 1.0//EN")) {
+            return new InputSource(getClass().getResourceAsStream(
+                    "/jSquashfs-1.0.dtd"));
+        }
+        return super.resolveEntity(publicId, systemId);
+    }
+
+    /**
      * gets the root directory.
      * @return the root directory.
      */
@@ -85,7 +100,8 @@ public class ManifestSAXHandler extends DefaultHandler {
             this.objectStack.push(this.manifest);
         }
 
-        else if (qName.equals("directory")) {
+        else if (qName.equals("root-directory") || qName.equals("directory")
+                || qName.equals("file") || qName.equals("symbolic-link")) {
             long uid = Long.parseLong(attributes.getValue("uid"));
             long guid = Long.parseLong(attributes.getValue("guid"));
             Date dateMTime;
@@ -104,73 +120,44 @@ public class ManifestSAXHandler extends DefaultHandler {
             int mode = SquashFSUtils.getModeFromString(attributes
                     .getValue("mode"));
             String name = attributes.getValue("name");
-            Directory dir = new Directory(name, mode, mTime, guid, uid);
-            try {
-                addToParent(this.objectStack.peek(), dir);
-            } catch (SquashFSException e) {
-                throw new SAXException("adding item to parent", e);
-            }
-            this.objectStack.push(dir);
-        }
 
-        else if (qName.equals("file")) {
-            long uid = Long.parseLong(attributes.getValue("uid"));
-            long guid = Long.parseLong(attributes.getValue("guid"));
-            Date dateMTime;
-            String strMTime = attributes.getValue("mtime");
-            try {
-                if (strMTime == null) {
-                    dateMTime = system.getCurrentDate();
-                } else {
-                    dateMTime = SquashFSUtils.ISO8601_FORMAT.parse(strMTime);
+            if (qName.equals("root-directory") || qName.equals("directory")) {
+                Directory dir = new Directory(name, mode, mTime, guid, uid);
+                try {
+                    addToParent(this.objectStack.peek(), dir);
+                } catch (SquashFSException e) {
+                    throw new SAXException("adding item to parent", e);
                 }
-            } catch (ParseException e) {
-                throw new SAXException("could not parse mtime '" + strMTime
-                        + "'", e);
+                this.objectStack.push(dir);
             }
-            long mTime = SquashFSUtils.getMTimeFromDate(dateMTime);
-            int mode = SquashFSUtils.getModeFromString(attributes
-                    .getValue("mode"));
-            String name = attributes.getValue("name");
-            String fileName = attributes.getValue("file");
-            File sourceFile = new File(this.sourceDir, fileName);
-            SFSFile file = new SFSSourceFile(name, mode, mTime, guid, uid,
-                    sourceFile);
-            try {
-                addToParent(this.objectStack.peek(), file);
-            } catch (SquashFSException e) {
-                throw new SAXException("adding item to parent", e);
-            }
-            this.objectStack.push(file);
-        }
 
-        else if (qName.equals("symbolic-link")) {
-            long uid = Long.parseLong(attributes.getValue("uid"));
-            long guid = Long.parseLong(attributes.getValue("guid"));
-            Date dateMTime;
-            String strMTime = attributes.getValue("mtime");
-            try {
-                if (strMTime == null) {
-                    dateMTime = system.getCurrentDate();
-                } else {
-                    dateMTime = SquashFSUtils.ISO8601_FORMAT.parse(strMTime);
+            else if (qName.equals("file")) {
+                String fileName = attributes.getValue("file");
+                File sourceFile = null;
+                if (fileName != null) {
+                    sourceFile = new File(this.sourceDir, fileName);
                 }
-            } catch (ParseException e) {
-                throw new SAXException("could not parse mtime '" + strMTime
-                        + "'", e);
+                SFSFile file = new SFSSourceFile(name, mode, mTime, guid, uid,
+                        sourceFile);
+                try {
+                    addToParent(this.objectStack.peek(), file);
+                } catch (SquashFSException e) {
+                    throw new SAXException("adding item to parent", e);
+                }
+                this.objectStack.push(file);
             }
-            long mTime = SquashFSUtils.getMTimeFromDate(dateMTime);
-            int mode = SquashFSUtils.getModeFromString(attributes
-                    .getValue("mode"));
-            String name = attributes.getValue("name");
-            String linkName = attributes.getValue("link");
-            SymLink link = new SymLink(name, mode, mTime, guid, uid, linkName);
-            try {
-                addToParent(this.objectStack.peek(), link);
-            } catch (SquashFSException e) {
-                throw new SAXException("adding item to parent", e);
+
+            else if (qName.equals("symbolic-link")) {
+                String linkName = attributes.getValue("link");
+                SymLink link = new SymLink(name, mode, mTime, guid, uid,
+                        linkName);
+                try {
+                    addToParent(this.objectStack.peek(), link);
+                } catch (SquashFSException e) {
+                    throw new SAXException("adding item to parent", e);
+                }
+                this.objectStack.push(link);
             }
-            this.objectStack.push(link);
         }
 
         else {
