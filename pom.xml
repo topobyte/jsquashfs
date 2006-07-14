@@ -7,7 +7,92 @@
 	<packaging>jar</packaging>
 	<version>0.9-beta</version>
 	<name>jSquashfs</name>
-	<url>http://www.fernsroth.com/tech/squashfs/</url>
+	<url>http://jsquashfs.sourceforge.net/</url>
+	<description>
+		Java implementation of the squashfs file system.
+	</description>
+	<developers>
+		<developer>
+			<id>joegtp</id>
+			<name>Joseph M. Ferner</name>
+			<email>joe@fernsroth.com</email>
+			<organization>Near Infinity Corporation</organization>
+			<organizationUrl>http://www.nearinfinity.com/</organizationUrl>
+			<roles>
+				<role>Lead Developer</role>
+			</roles>
+			<timezone>-5</timezone>
+		</developer>
+	</developers>
+	<licenses>
+		<license>
+			<name>Apache License</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	<scm>
+		<connection>scm:svn:https://svn.sourceforge.net/svnroot/jsquashfs/trunk</connection>
+		<developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/jsquashfs/trunk</developerConnection>
+		<url>http://svn.sourceforge.net/jsquashfs</url>
+	</scm>
+	<distributionManagement>
+		<site>
+			<id>website</id>
+			<name>sourceforge</name>
+			<url>scp://shell.sourceforge.net/home/groups/j/js/jsquashfs/htdocs/</url>
+		</site>
+	</distributionManagement>
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>changes-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<artifactId>maven-pmd-plugin</artifactId>
+				<configuration>
+					<targetJdk>1.5</targetJdk>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<configuration>
+					<configLocation>checkstyle.xml</configLocation>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>jxr-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>changelog-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>taglist-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>surefire-report-maven-plugin</artifactId>
+				<configuration>
+					<testFailureIgnore>true</testFailureIgnore>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<configuration>
+					<showPackage>false</showPackage>
+					<showPrivate>true</showPrivate>
+					<docfilessubdirs>true</docfilessubdirs>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</reporting>
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>

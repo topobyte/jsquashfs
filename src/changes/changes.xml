@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<document>
+	<properties>
+		<title>Changes</title>
+	</properties>
+	<body>
+		<release version="0.9-beta" date="2006-07-14" description="First beta release">
+			<action dev="joegtp" type="add">First beta release</action>
+		</release>
+	</body>
+</document>

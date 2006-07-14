@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="${project.name}">
+	<bannerLeft>
+		<name>${project.name}</name>
+		<!--
+		<src>http://maven.apache.org/images/apache-maven-project.png</src>
+		<href>http://maven.apache.org/</href>
+		-->
+	</bannerLeft>
+	<!--
+	<bannerRight>
+		<src>http://maven.apache.org/images/maven-small.gif</src>
+	</bannerRight>
+	-->
+	<body>
+		<links>
+			<item name="${project.name}" href="${project.url}"/>
+			<item name="${project.name} Project Page" href="http://sourceforge.net/projects/jsquashfs/"/>
+			<item name="SourceForge" href="http://sourceforge.net/"/>
+		</links>
+
+    	<menu ref="parent" />
+		<menu ref="modules" />
+		<menu ref="reports" />
+		<!--
+		<footer>
+			<a href="http://sourceforge.net/donate/index.php?group_id=172127"><img src="http://images.sourceforge.net/images/project-support.jpg" width="88" height="32" border="0" alt="Support This Project" /></a>
+		</footer>
+		-->
+	</body>
+</project>
