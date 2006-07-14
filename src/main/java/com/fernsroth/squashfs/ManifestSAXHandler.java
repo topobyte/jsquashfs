@@ -62,7 +62,7 @@ public class ManifestSAXHandler extends DefaultHandler {
     @Override
     public InputSource resolveEntity(String publicId, String systemId)
             throws IOException, SAXException {
-        if (publicId.equals("-//Fersroth//DTD jSquashFSManifest 1.0//EN")) {
+        if (publicId.equals(SquashFSGlobals.DOCTYPE_PUBLIC)) {
             return new InputSource(getClass().getResourceAsStream(
                     "/jSquashfs-1.0.dtd"));
         }

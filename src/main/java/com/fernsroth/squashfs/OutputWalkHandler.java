@@ -37,9 +37,37 @@ import com.fernsroth.squashfs.model.SymLink;
 public class OutputWalkHandler implements WalkHandler {
 
     /**
+     * the XML document builder.
+     */
+    private static DocumentBuilder builder;
+
+    /**
      * an identity transformer.
      */
     private static Transformer identityTransformer;
+
+    static {
+        try {
+            DocumentBuilderFactory builderFactory = DocumentBuilderFactory
+                    .newInstance();
+            builder = builderFactory.newDocumentBuilder();
+
+            TransformerFactory transformerFactory = TransformerFactory
+                    .newInstance();
+            identityTransformer = transformerFactory.newTransformer();
+            identityTransformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            identityTransformer.setOutputProperty(OutputKeys.DOCTYPE_PUBLIC,
+                    SquashFSGlobals.DOCTYPE_PUBLIC);
+            identityTransformer.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM,
+                    SquashFSGlobals.DOCTYPE_SYSTEM);
+        } catch (ParserConfigurationException e) {
+            throw new ExceptionInInitializerError(e);
+        } catch (TransformerConfigurationException e) {
+            throw new ExceptionInInitializerError(e);
+        } catch (TransformerFactoryConfigurationError e) {
+            throw new ExceptionInInitializerError(e);
+        }
+    }
 
     /**
      * the reader.
@@ -66,17 +94,10 @@ public class OutputWalkHandler implements WalkHandler {
      */
     private Element manifestElement;
 
-    static {
-        try {
-            identityTransformer = TransformerFactory.newInstance()
-                    .newTransformer();
-            identityTransformer.setOutputProperty(OutputKeys.INDENT, "yes");
-        } catch (TransformerConfigurationException e) {
-            throw new ExceptionInInitializerError(e);
-        } catch (TransformerFactoryConfigurationError e) {
-            throw new ExceptionInInitializerError(e);
-        }
-    }
+    /**
+     * includes the mtime in the manifest file.
+     */
+    private boolean includeMTimeInManfest = true;
 
     /**
      * @param reader the source file.
@@ -87,8 +108,6 @@ public class OutputWalkHandler implements WalkHandler {
             throws ParserConfigurationException {
         this.reader = reader;
         this.destFile = destFile;
-        DocumentBuilder builder = DocumentBuilderFactory.newInstance()
-                .newDocumentBuilder();
         this.manifest = builder.newDocument();
         this.manifestElement = this.manifest.createElement("squashfs-manifest");
         this.manifest.appendChild(this.manifestElement);
@@ -119,8 +138,10 @@ public class OutputWalkHandler implements WalkHandler {
             if (file instanceof Directory) {
                 f.mkdirs();
             } else if (file instanceof SFSSquashedFile) {
-                element.setAttribute("file", SquashFSUtils.getRelativePath(
-                        this.destFile, f));
+                /* enable this to output explicit file attribute to xml manifest file.
+                 element.setAttribute("file", SquashFSUtils.getRelativePath(
+                 this.destFile, f));
+                 */
                 FileOutputStream outFile = new FileOutputStream(f);
                 this.reader.writeFile((SFSSquashedFile) file, outFile);
                 outFile.close();
@@ -146,25 +167,38 @@ public class OutputWalkHandler implements WalkHandler {
      */
     private Element createManifestElement(Node parent, BaseFile file) {
         Element elem;
-        if (file instanceof Directory) {
+        if (file instanceof Directory && parent == this.manifestElement) {
+            elem = this.manifest.createElement("root-directory");
+        } else if (file instanceof Directory) {
             elem = this.manifest.createElement("directory");
         } else if (file instanceof SFSSquashedFile) {
             elem = this.manifest.createElement("file");
         } else if (file instanceof SymLink) {
             elem = this.manifest.createElement("symbolic-link");
-            elem.setAttribute("link", ((SymLink) file).getLinkName());
         } else {
             throw new RuntimeException("unknown file type '"
                     + file.getClass().getName() + "'");
         }
+
         if (file.getName() != null) {
             elem.setAttribute("name", file.getName());
         }
-        elem.setAttribute("uid", Long.toString(file.getUid()));
-        elem.setAttribute("guid", Long.toString(file.getGuid()));
+        if (file instanceof SymLink) {
+            elem.setAttribute("link", ((SymLink) file).getLinkName());
+        }
+
+        if (file.getUid() != 0) {
+            elem.setAttribute("uid", Long.toString(file.getUid()));
+        }
+        if (file.getGuid() != 0) {
+            elem.setAttribute("guid", Long.toString(file.getGuid()));
+        }
         elem.setAttribute("mode", SquashFSUtils.getModeString(file));
-        elem.setAttribute("mtime", SquashFSUtils.ISO8601_FORMAT
-                .format(SquashFSUtils.getDateFromMTime(file.getMTime())));
+        if (this.includeMTimeInManfest) {
+            elem.setAttribute("mtime", SquashFSUtils.ISO8601_FORMAT
+                    .format(SquashFSUtils.getDateFromMTime(file.getMTime())));
+        }
+
         parent.appendChild(elem);
         return elem;
     }
@@ -220,5 +254,12 @@ public class OutputWalkHandler implements WalkHandler {
         public Element getManifestElement() {
             return this.element;
         }
+    }
+
+    /**
+     * @param includeMTimeInManfest
+     */
+    public void setIncludeMTimeInManfest(boolean includeMTimeInManfest) {
+        this.includeMTimeInManfest = includeMTimeInManfest;
     }
 }

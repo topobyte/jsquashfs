@@ -99,8 +99,9 @@ public final class Unsquashfs {
             SquashFSUtils.walk(reader.getRootDirectory(), new LSWalkHandler());
         } else {
             OutputWalkHandler out = new OutputWalkHandler(reader, destFile);
+            out.setIncludeMTimeInManfest(false);
             SquashFSUtils.walk(reader.getRootDirectory(), out);
-            out.writeManifest(new File(destFile, "unsquashfs.xml"));
+            out.writeManifest(new File(destFile, "manifest.xml"));
         }
     }
 
