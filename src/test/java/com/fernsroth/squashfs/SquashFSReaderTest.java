@@ -81,85 +81,130 @@ public class SquashFSReaderTest extends SquashFSTestBase {
         SquashFSReader reader = new SquashFSReader(in);
         Directory rootDirectory = reader.getRootDirectory();
         assertNotNull(rootDirectory);
-        assertEquals(3, rootDirectory.getSubentries().size());
+        assertEquals(6, rootDirectory.getSubentries().size());
 
         WalkerMock testWalker = new WalkerMock(reader);
         SquashFSUtils.walk(rootDirectory, testWalker);
-        assertEquals(15, testWalker.visitData.size());
+        assertEquals(23, testWalker.visitData.size());
 
-        VisitData data = testWalker.visitData.get(0);
+        int fileNo = 0;
+
+        VisitData data = testWalker.visitData.get(fileNo++);
         assertEquals(0, data.path.length);
 
-        data = testWalker.visitData.get(1);
+        data = testWalker.visitData.get(fileNo++);
+        assertEquals("bigfile", data.file.getName());
+        assertEquals(stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR | stat.S_IRGRP
+                | stat.S_IXGRP | stat.S_IROTH | stat.S_IXOTH, data.file
+                .getMode());
+
+        data = testWalker.visitData.get(fileNo++);
+        assertEquals("file1", data.file.getName());
+        assertEquals(squashfs_constants.SQUASHFS_MODE(SquashFSUtils
+                .getModeFromString("-rw-r--r--")), data.file.getMode());
+        assertEquals(EasyIOFormatter.print(getClass().getResourceAsStream(
+                "multi-file/tar")), EasyIOFormatter.print(data.buffer));
+
+        data = testWalker.visitData.get(fileNo++);
         assertEquals("dir1", data.file.getName());
         assertEquals(stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR | stat.S_IRGRP
                 | stat.S_IXGRP | stat.S_IROTH | stat.S_IXOTH, data.file
                 .getMode());
 
-        data = testWalker.visitData.get(2);
+        data = testWalker.visitData.get(fileNo++);
         assertEquals("dir2", data.file.getName());
         assertEquals(stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR | stat.S_IRGRP
                 | stat.S_IXGRP | stat.S_IROTH | stat.S_IXOTH, data.file
                 .getMode());
 
-        data = testWalker.visitData.get(3);
+        data = testWalker.visitData.get(fileNo++);
         assertEquals("link-file", data.file.getName());
         assertEquals(squashfs_constants.SQUASHFS_MODE(SquashFSUtils
                 .getModeFromString("lrwxrwxrwx")), data.file.getMode());
         assertTrue(data.file instanceof SymLink);
         assertEquals("../test-dest", ((SymLink) data.file).getLinkName());
 
-        data = testWalker.visitData.get(4);
+        data = testWalker.visitData.get(fileNo++);
         assertEquals("dir3", data.file.getName());
         assertEquals(squashfs_constants.SQUASHFS_MODE(SquashFSUtils
                 .getModeFromString("-rwxr-xr-x")), data.file.getMode());
 
-        data = testWalker.visitData.get(5);
+        data = testWalker.visitData.get(fileNo++);
         assertEquals("dir3-file", data.file.getName());
         assertEquals(squashfs_constants.SQUASHFS_MODE(SquashFSUtils
                 .getModeFromString("-rw-r--r--")), data.file.getMode());
 
-        data = testWalker.visitData.get(6);
+        data = testWalker.visitData.get(fileNo++);
+        assertEquals("empty_dir", data.file.getName());
+        assertEquals(squashfs_constants.SQUASHFS_MODE(SquashFSUtils
+                .getModeFromString("-rwxr-xr-x")), data.file.getMode());
+
+        data = testWalker.visitData.get(fileNo++);
+        assertEquals("owner", data.file.getName());
+        assertEquals(squashfs_constants.SQUASHFS_MODE(SquashFSUtils
+                .getModeFromString("-rwxr-xr-x")), data.file.getMode());
+
+        data = testWalker.visitData.get(fileNo++);
+        assertEquals("root", data.file.getName());
+        assertEquals(0, data.file.getGuid());
+        assertEquals(0, data.file.getUid());
+
+        data = testWalker.visitData.get(fileNo++);
+        assertEquals("root_user1", data.file.getName());
+        assertEquals(1, data.file.getGuid());
+        assertEquals(0, data.file.getUid());
+
+        data = testWalker.visitData.get(fileNo++);
+        assertEquals("user1", data.file.getName());
+        assertEquals(1, data.file.getGuid());
+        assertEquals(1, data.file.getUid());
+
+        data = testWalker.visitData.get(fileNo++);
+        assertEquals("user1_root", data.file.getName());
+        assertEquals(0, data.file.getGuid());
+        assertEquals(1, data.file.getUid());
+
+        data = testWalker.visitData.get(fileNo++);
         assertEquals("permissions", data.file.getName());
         assertEquals(squashfs_constants.SQUASHFS_MODE(SquashFSUtils
                 .getModeFromString("-rwxr-xr-x")), data.file.getMode());
 
-        data = testWalker.visitData.get(7);
+        data = testWalker.visitData.get(fileNo++);
         assertEquals("f---------", data.file.getName());
         assertEquals(squashfs_constants.SQUASHFS_MODE(SquashFSUtils
                 .getModeFromString("----------")), data.file.getMode());
 
-        data = testWalker.visitData.get(8);
+        data = testWalker.visitData.get(fileNo++);
         assertEquals("f------rwx", data.file.getName());
         assertEquals(squashfs_constants.SQUASHFS_MODE(SquashFSUtils
                 .getModeFromString("-------rwx")), data.file.getMode());
 
-        data = testWalker.visitData.get(9);
+        data = testWalker.visitData.get(fileNo++);
         assertEquals("f---rwx---", data.file.getName());
         assertEquals(squashfs_constants.SQUASHFS_MODE(SquashFSUtils
                 .getModeFromString("----rwx---")), data.file.getMode());
 
-        data = testWalker.visitData.get(10);
+        data = testWalker.visitData.get(fileNo++);
         assertEquals("f--x--x--x", data.file.getName());
         assertEquals(squashfs_constants.SQUASHFS_MODE(SquashFSUtils
                 .getModeFromString("---x--x--x")), data.file.getMode());
 
-        data = testWalker.visitData.get(11);
+        data = testWalker.visitData.get(fileNo++);
         assertEquals("f-w--w--w-", data.file.getName());
         assertEquals(squashfs_constants.SQUASHFS_MODE(SquashFSUtils
                 .getModeFromString("--w--w--w-")), data.file.getMode());
 
-        data = testWalker.visitData.get(12);
+        data = testWalker.visitData.get(fileNo++);
         assertEquals("fr--r--r--", data.file.getName());
         assertEquals(squashfs_constants.SQUASHFS_MODE(SquashFSUtils
                 .getModeFromString("-r--r--r--")), data.file.getMode());
 
-        data = testWalker.visitData.get(13);
+        data = testWalker.visitData.get(fileNo++);
         assertEquals("frwx------", data.file.getName());
         assertEquals(squashfs_constants.SQUASHFS_MODE(SquashFSUtils
                 .getModeFromString("-rwx------")), data.file.getMode());
 
-        data = testWalker.visitData.get(14);
+        data = testWalker.visitData.get(fileNo++);
         assertEquals("root-file", data.file.getName());
         assertEquals(squashfs_constants.SQUASHFS_MODE(SquashFSUtils
                 .getModeFromString("-rw-r--r--")), data.file.getMode());

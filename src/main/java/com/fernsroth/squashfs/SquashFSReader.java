@@ -65,12 +65,12 @@ public final class SquashFSReader {
     /**
      * see unsquashfs.c.
      */
-    private byte[] uid_table;
+    private long[] uid_table;
 
     /**
      * see unsquashfs.c.
      */
-    private byte[] guid_table;
+    private long[] guid_table;
 
     /**
      * see unsquashfs.c.
@@ -589,17 +589,17 @@ public final class SquashFSReader {
      * @throws IOException
      */
     private void read_uids_guids() throws IOException {
-        this.uid_table = new byte[this.superBlock.no_uids * 4];
-        this.guid_table = new byte[this.superBlock.no_guids * 4];
+        this.uid_table = new long[this.superBlock.no_uids];
+        this.guid_table = new long[this.superBlock.no_guids];
 
         this.source.seek((int) this.superBlock.uid_start);
 
-        if (this.source.read(this.uid_table, 0, this.uid_table.length) != this.uid_table.length) {
-            throw new IOException("read past end of stream");
+        EasyIOInputStream in = new EasyIOInputStream(this.source);
+        for (int i = 0; i < this.uid_table.length; i++) {
+            this.uid_table[i] = in.readUINT32();
         }
-
-        if (this.source.read(this.guid_table, 0, this.guid_table.length) != this.guid_table.length) {
-            throw new IOException("read past end of stream");
+        for (int i = 0; i < this.guid_table.length; i++) {
+            this.guid_table[i] = in.readUINT32();
         }
     }
 
@@ -812,9 +812,10 @@ public final class SquashFSReader {
          SQUASHFS_SWAP_INTS(block_list, sblock_list, blocks);
          } else {
          */
-        byte[] blockData = new byte[squashFile.getBlocks() * 4];
+        byte[] inode_table_bytes = this.inode_table.toByteArray();
         EasyIOInputStream in = new EasyIOInputStream(new ByteArrayInputStream(
-                blockData));
+                inode_table_bytes, (int) squashFile.getBlockPtr(), squashFile
+                        .getBlocks() * 4));
         for (int i = 0; i < squashFile.getBlocks(); i++) {
             block_list.add(in.readUINT32());
         }

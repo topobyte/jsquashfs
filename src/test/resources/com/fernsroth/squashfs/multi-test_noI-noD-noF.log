@@ -1,104 +1,152 @@
 Creating little endian 3.0 filesystem on ../multi-test.sfs, block size 65536.
+mksquashfs: File inode, file_size 198596, start_block 77, blocks 4, fragment -1, offset 0, size 0
+mksquashfs: Block 0, size 16842752
+mksquashfs: Block 1, size 16842752
+mksquashfs: Block 2, size 16842752
+mksquashfs: Block 3, size 16779204
+mksquashfs: Created inode 0x0, type 2, uid 0, guid 255
+mksquashfs: file ./bigfile/file1, uncompressed size 198596 bytes 
+mksquashfs: Directory inode, file_size 22, start_block 0, offset 0, nlink 2
+mksquashfs: Created inode 0x30, type 1, uid 0, guid 255
+mksquashfs: Directory contents of inode 0x30
+mksquashfs: 	Start block 0x0, count 1
+mksquashfs: 		name file1, inode offset 0x0, type 2
+mksquashfs: directory ./bigfile inode 0x30
 mksquashfs: Symbolic link inode, symlink_size 12, nlink 1
-mksquashfs: Created inode 0x0, type 3, uid 0, guid 255
-mksquashfs: symbolic link link-file inode 0x0
-mksquashfs: Directory inode, file_size 26, start_block 0, offset 0, nlink 2
-mksquashfs: Created inode 0x1e, type 1, uid 0, guid 255
-mksquashfs: Directory contents of inode 0x1e
+mksquashfs: Created inode 0x4c, type 3, uid 0, guid 255
+mksquashfs: symbolic link link-file inode 0x4c
+mksquashfs: Directory inode, file_size 26, start_block 0, offset 13, nlink 2
+mksquashfs: Created inode 0x6a, type 1, uid 0, guid 255
+mksquashfs: Directory contents of inode 0x6a
 mksquashfs: 	Start block 0x0, count 1
-mksquashfs: 		name link-file, inode offset 0x0, type 3
-mksquashfs: directory ./dir1/dir2 inode 0x1e
-mksquashfs: File inode, file_size 9, start_block 77, blocks 0, fragment 0, offset 0, size 9
-mksquashfs: Created inode 0x3a, type 2, uid 0, guid 255
+mksquashfs: 		name link-file, inode offset 0x4c, type 3
+mksquashfs: directory ./dir1/dir2 inode 0x6a
+mksquashfs: File inode, file_size 9, start_block 3083b, blocks 0, fragment 0, offset 0, size 9
+mksquashfs: Created inode 0x86, type 2, uid 0, guid 255
 mksquashfs: file ./dir1/dir3/dir3-file, uncompressed size 9 bytes 
-mksquashfs: Directory inode, file_size 26, start_block 0, offset 17, nlink 2
-mksquashfs: Created inode 0x5a, type 1, uid 0, guid 255
-mksquashfs: Directory contents of inode 0x5a
+mksquashfs: Directory inode, file_size 26, start_block 0, offset 2a, nlink 2
+mksquashfs: Created inode 0xa6, type 1, uid 0, guid 255
+mksquashfs: Directory contents of inode 0xa6
 mksquashfs: 	Start block 0x0, count 1
-mksquashfs: 		name dir3-file, inode offset 0x3a, type 2
-mksquashfs: directory ./dir1/dir3 inode 0x5a
-mksquashfs: Directory inode, file_size 30, start_block 0, offset 2e, nlink 4
-mksquashfs: Created inode 0x76, type 1, uid 0, guid 255
-mksquashfs: Directory contents of inode 0x76
+mksquashfs: 		name dir3-file, inode offset 0x86, type 2
+mksquashfs: directory ./dir1/dir3 inode 0xa6
+mksquashfs: Directory inode, file_size 30, start_block 0, offset 41, nlink 4
+mksquashfs: Created inode 0xc2, type 1, uid 0, guid 255
+mksquashfs: Directory contents of inode 0xc2
 mksquashfs: 	Start block 0x0, count 2
-mksquashfs: 		name dir2, inode offset 0x1e, type 1
-mksquashfs: 		name dir3, inode offset 0x5a, type 1
-mksquashfs: directory ./dir1 inode 0x76
-mksquashfs: File inode, file_size 0, start_block 77, blocks 0, fragment -1, offset 0, size 0
-mksquashfs: Created inode 0x92, type 2, uid 0, guid 255
-mksquashfs: file ./permissions/f---------, uncompressed size 0 bytes 
-mksquashfs: Found duplicate file, start 0x77, size 0, checksum 0x0, fragment -1, size 0, offset 0, checksum 0x0
-mksquashfs: File inode, file_size 0, start_block 77, blocks 0, fragment -1, offset 0, size 0
-mksquashfs: Created inode 0xb2, type 2, uid 0, guid 255
+mksquashfs: 		name dir2, inode offset 0x6a, type 1
+mksquashfs: 		name dir3, inode offset 0xa6, type 1
+mksquashfs: directory ./dir1 inode 0xc2
+mksquashfs: Directory inode, file_size 3, start_block 0, offset 5c, nlink 2
+mksquashfs: Created inode 0xde, type 1, uid 0, guid 255
+mksquashfs: Directory contents of inode 0xde
+mksquashfs: directory ./empty_dir inode 0xde
+mksquashfs: File inode, file_size 0, start_block 3083b, blocks 0, fragment -1, offset 0, size 0
+mksquashfs: Created inode 0xfa, type 2, uid 0, guid 255
+mksquashfs: file ./owner/root, uncompressed size 0 bytes 
+mksquashfs: Found duplicate file, start 0x3083b, size 0, checksum 0x0, fragment -1, size 0, offset 0, checksum 0x0
+mksquashfs: File inode, file_size 0, start_block 3083b, blocks 0, fragment -1, offset 0, size 0
+mksquashfs: Created inode 0x11a, type 2, uid 0, guid 0
+mksquashfs: file ./owner/root_user1, uncompressed size 0 bytes DUPLICATE
+mksquashfs: Found duplicate file, start 0x3083b, size 0, checksum 0x0, fragment -1, size 0, offset 0, checksum 0x0
+mksquashfs: File inode, file_size 0, start_block 3083b, blocks 0, fragment -1, offset 0, size 0
+mksquashfs: Created inode 0x13a, type 2, uid 1, guid 255
+mksquashfs: file ./owner/user1, uncompressed size 0 bytes DUPLICATE
+mksquashfs: Found duplicate file, start 0x3083b, size 0, checksum 0x0, fragment -1, size 0, offset 0, checksum 0x0
+mksquashfs: File inode, file_size 0, start_block 3083b, blocks 0, fragment -1, offset 0, size 0
+mksquashfs: Created inode 0x15a, type 2, uid 1, guid 1
+mksquashfs: file ./owner/user1_root, uncompressed size 0 bytes DUPLICATE
+mksquashfs: Directory inode, file_size 61, start_block 0, offset 5c, nlink 2
+mksquashfs: Created inode 0x17a, type 1, uid 0, guid 255
+mksquashfs: Directory contents of inode 0x17a
+mksquashfs: 	Start block 0x0, count 4
+mksquashfs: 		name root, inode offset 0xfa, type 2
+mksquashfs: 		name root_user1, inode offset 0x11a, type 2
+mksquashfs: 		name user1, inode offset 0x13a, type 2
+mksquashfs: 		name user1_root, inode offset 0x15a, type 2
+mksquashfs: directory ./owner inode 0x17a
+mksquashfs: Found duplicate file, start 0x3083b, size 0, checksum 0x0, fragment -1, size 0, offset 0, checksum 0x0
+mksquashfs: File inode, file_size 0, start_block 3083b, blocks 0, fragment -1, offset 0, size 0
+mksquashfs: Created inode 0x196, type 2, uid 0, guid 255
+mksquashfs: file ./permissions/f---------, uncompressed size 0 bytes DUPLICATE
+mksquashfs: Found duplicate file, start 0x3083b, size 0, checksum 0x0, fragment -1, size 0, offset 0, checksum 0x0
+mksquashfs: File inode, file_size 0, start_block 3083b, blocks 0, fragment -1, offset 0, size 0
+mksquashfs: Created inode 0x1b6, type 2, uid 0, guid 255
 mksquashfs: file ./permissions/f------rwx, uncompressed size 0 bytes DUPLICATE
-mksquashfs: Found duplicate file, start 0x77, size 0, checksum 0x0, fragment -1, size 0, offset 0, checksum 0x0
-mksquashfs: File inode, file_size 0, start_block 77, blocks 0, fragment -1, offset 0, size 0
-mksquashfs: Created inode 0xd2, type 2, uid 0, guid 255
+mksquashfs: Found duplicate file, start 0x3083b, size 0, checksum 0x0, fragment -1, size 0, offset 0, checksum 0x0
+mksquashfs: File inode, file_size 0, start_block 3083b, blocks 0, fragment -1, offset 0, size 0
+mksquashfs: Created inode 0x1d6, type 2, uid 0, guid 255
 mksquashfs: file ./permissions/f---rwx---, uncompressed size 0 bytes DUPLICATE
-mksquashfs: Found duplicate file, start 0x77, size 0, checksum 0x0, fragment -1, size 0, offset 0, checksum 0x0
-mksquashfs: File inode, file_size 0, start_block 77, blocks 0, fragment -1, offset 0, size 0
-mksquashfs: Created inode 0xf2, type 2, uid 0, guid 255
+mksquashfs: Found duplicate file, start 0x3083b, size 0, checksum 0x0, fragment -1, size 0, offset 0, checksum 0x0
+mksquashfs: File inode, file_size 0, start_block 3083b, blocks 0, fragment -1, offset 0, size 0
+mksquashfs: Created inode 0x1f6, type 2, uid 0, guid 255
 mksquashfs: file ./permissions/f--x--x--x, uncompressed size 0 bytes DUPLICATE
-mksquashfs: Found duplicate file, start 0x77, size 0, checksum 0x0, fragment -1, size 0, offset 0, checksum 0x0
-mksquashfs: File inode, file_size 0, start_block 77, blocks 0, fragment -1, offset 0, size 0
-mksquashfs: Created inode 0x112, type 2, uid 0, guid 255
+mksquashfs: Found duplicate file, start 0x3083b, size 0, checksum 0x0, fragment -1, size 0, offset 0, checksum 0x0
+mksquashfs: File inode, file_size 0, start_block 3083b, blocks 0, fragment -1, offset 0, size 0
+mksquashfs: Created inode 0x216, type 2, uid 0, guid 255
 mksquashfs: file ./permissions/f-w--w--w-, uncompressed size 0 bytes DUPLICATE
-mksquashfs: Found duplicate file, start 0x77, size 0, checksum 0x0, fragment -1, size 0, offset 0, checksum 0x0
-mksquashfs: File inode, file_size 0, start_block 77, blocks 0, fragment -1, offset 0, size 0
-mksquashfs: Created inode 0x132, type 2, uid 0, guid 255
+mksquashfs: Found duplicate file, start 0x3083b, size 0, checksum 0x0, fragment -1, size 0, offset 0, checksum 0x0
+mksquashfs: File inode, file_size 0, start_block 3083b, blocks 0, fragment -1, offset 0, size 0
+mksquashfs: Created inode 0x236, type 2, uid 0, guid 255
 mksquashfs: file ./permissions/fr--r--r--, uncompressed size 0 bytes DUPLICATE
-mksquashfs: Found duplicate file, start 0x77, size 0, checksum 0x0, fragment -1, size 0, offset 0, checksum 0x0
-mksquashfs: File inode, file_size 0, start_block 77, blocks 0, fragment -1, offset 0, size 0
-mksquashfs: Created inode 0x152, type 2, uid 0, guid 255
+mksquashfs: Found duplicate file, start 0x3083b, size 0, checksum 0x0, fragment -1, size 0, offset 0, checksum 0x0
+mksquashfs: File inode, file_size 0, start_block 3083b, blocks 0, fragment -1, offset 0, size 0
+mksquashfs: Created inode 0x256, type 2, uid 0, guid 255
 mksquashfs: file ./permissions/frwx------, uncompressed size 0 bytes DUPLICATE
-mksquashfs: Directory inode, file_size 117, start_block 0, offset 49, nlink 2
-mksquashfs: Created inode 0x172, type 1, uid 0, guid 255
-mksquashfs: Directory contents of inode 0x172
+mksquashfs: Directory inode, file_size 117, start_block 0, offset 96, nlink 2
+mksquashfs: Created inode 0x276, type 1, uid 0, guid 255
+mksquashfs: Directory contents of inode 0x276
 mksquashfs: 	Start block 0x0, count 7
-mksquashfs: 		name f---------, inode offset 0x92, type 2
-mksquashfs: 		name f------rwx, inode offset 0xb2, type 2
-mksquashfs: 		name f---rwx---, inode offset 0xd2, type 2
-mksquashfs: 		name f--x--x--x, inode offset 0xf2, type 2
-mksquashfs: 		name f-w--w--w-, inode offset 0x112, type 2
-mksquashfs: 		name fr--r--r--, inode offset 0x132, type 2
-mksquashfs: 		name frwx------, inode offset 0x152, type 2
-mksquashfs: directory ./permissions inode 0x172
-mksquashfs: File inode, file_size 14, start_block 77, blocks 0, fragment 0, offset 9, size 14
-mksquashfs: Created inode 0x18e, type 2, uid 0, guid 255
+mksquashfs: 		name f---------, inode offset 0x196, type 2
+mksquashfs: 		name f------rwx, inode offset 0x1b6, type 2
+mksquashfs: 		name f---rwx---, inode offset 0x1d6, type 2
+mksquashfs: 		name f--x--x--x, inode offset 0x1f6, type 2
+mksquashfs: 		name f-w--w--w-, inode offset 0x216, type 2
+mksquashfs: 		name fr--r--r--, inode offset 0x236, type 2
+mksquashfs: 		name frwx------, inode offset 0x256, type 2
+mksquashfs: directory ./permissions inode 0x276
+mksquashfs: File inode, file_size 14, start_block 3083b, blocks 0, fragment 0, offset 9, size 14
+mksquashfs: Created inode 0x292, type 2, uid 0, guid 255
 mksquashfs: file ./root-file, uncompressed size 14 bytes 
-mksquashfs: Directory inode, file_size 51, start_block 0, offset bb, nlink 4
-mksquashfs: Created inode 0x1ae, type 1, uid 0, guid 255
-mksquashfs: Directory contents of inode 0x1ae
-mksquashfs: 	Start block 0x0, count 3
-mksquashfs: 		name dir1, inode offset 0x76, type 1
-mksquashfs: 		name permissions, inode offset 0x172, type 1
-mksquashfs: 		name root-file, inode offset 0x18e, type 2
-mksquashfs: directory . inode 0x1ae
+mksquashfs: Directory inode, file_size 87, start_block 0, offset 108, nlink 7
+mksquashfs: Created inode 0x2b2, type 1, uid 0, guid 255
+mksquashfs: Directory contents of inode 0x2b2
+mksquashfs: 	Start block 0x0, count 6
+mksquashfs: 		name bigfile, inode offset 0x30, type 1
+mksquashfs: 		name dir1, inode offset 0xc2, type 1
+mksquashfs: 		name empty_dir, inode offset 0xde, type 1
+mksquashfs: 		name owner, inode offset 0x17a, type 1
+mksquashfs: 		name permissions, inode offset 0x276, type 1
+mksquashfs: 		name root-file, inode offset 0x292, type 2
+mksquashfs: directory . inode 0x2b2
 mksquashfs: Writing fragment 0, uncompressed size 23, compressed size 23
-mksquashfs: Inode block @ 0, size 33226
-mksquashfs: Directory block @ 0, size 33003
+mksquashfs: Inode block @ 0, size 33486
+mksquashfs: Directory block @ 0, size 33116
 mksquashfs: write_fragment_table: fragments 1, frag_bytes 16, meta_blocks 1
-mksquashfs: write_fragment_table: fragment 0, start_block 77, size 16777239
-mksquashfs: sBlk->inode_table_start 0x8e
-mksquashfs: sBlk->directory_table_start 0x25a
-mksquashfs: sBlk->fragment_table_start 0x359
+mksquashfs: write_fragment_table: fragment 0, start_block 3083b, size 16777239
+mksquashfs: sBlk->inode_table_start 0x30852
+mksquashfs: sBlk->directory_table_start 0x30b22
+mksquashfs: sBlk->fragment_table_start 0x30c92
 
 Little endian filesystem, data block size 65536, uncompressed data, uncompressed metadata, uncompressed fragments
-Filesystem size 0.85 Kbytes (0.00 Mbytes)
-	103.33% of uncompressed filesystem size (0.82 Kbytes)
-Inode table size 460 bytes (0.45 Kbytes)
-	100.00% of uncompressed inode table size (460 bytes)
-Directory table size 237 bytes (0.23 Kbytes)
-	100.00% of uncompressed directory table size (237 bytes)
-Number of duplicate files found 6
-Number of inodes 15
-Number of files 9
+Filesystem size 195.17 Kbytes (0.19 Mbytes)
+	100.02% of uncompressed filesystem size (195.13 Kbytes)
+Inode table size 720 bytes (0.70 Kbytes)
+	100.00% of uncompressed inode table size (720 bytes)
+Directory table size 350 bytes (0.34 Kbytes)
+	100.00% of uncompressed directory table size (350 bytes)
+Number of duplicate files found 10
+Number of inodes 23
+Number of files 14
 Number of fragments 1
 Number of symbolic links  1
 Number of device nodes 0
 Number of fifo nodes 0
 Number of socket nodes 0
-Number of directories 5
-Number of uids 1
+Number of directories 8
+Number of uids 2
 	root (0)
-Number of gids 0
+	bin (1)
+Number of gids 2
+	bin (1)
+	root (0)
