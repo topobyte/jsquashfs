@@ -16,33 +16,33 @@ import com.fernsroth.easyio.field.FieldUINT32;
 @EasyIOClass(pack = 1)
 public class squashfs_reg_inode_header extends squashfs_base_inode_header {
 
-	/**
-	 * see squashfs_fs.h.
-	 */
-	@FieldINT64
-	public long start_block;
+    /**
+     * see squashfs_fs.h.
+     */
+    @FieldINT64
+    public long start_block;
 
-	/**
-	 * see squashfs_fs.h.
-	 */
-	@FieldUINT32
-	public long fragment;
+    /**
+     * see squashfs_fs.h.
+     */
+    @FieldUINT32
+    public long fragment;
 
-	/**
-	 * see squashfs_fs.h.
-	 */
-	@FieldUINT32
-	public long offset;
+    /**
+     * see squashfs_fs.h.
+     */
+    @FieldUINT32
+    public long offset;
 
-	/**
-	 * see squashfs_fs.h.
-	 */
-	@FieldUINT32
-	public long file_size;
+    /**
+     * see squashfs_fs.h.
+     */
+    @FieldUINT32
+    public long file_size;
 
-	/**
-	 * see squashfs_fs.h.
-	 */
-	public List<Long> block_list;
-	// TODO write a handler for this.
+    /**
+     * see squashfs_fs.h.
+     */
+    public List<Long> block_list;
+    // TODO write a handler for this.
 }

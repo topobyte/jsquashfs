@@ -9,14 +9,14 @@ package com.fernsroth.squashfs.model;
  */
 public abstract class SFSFile extends BaseFile {
 
-	/**
-	 * @param name
-	 * @param mode
-	 * @param time
-	 * @param guid
-	 * @param uid
-	 */
-	public SFSFile(String name, int mode, long time, long guid, long uid) {
-		super(name, mode, time, guid, uid);
-	}
+    /**
+     * @param name
+     * @param mode
+     * @param time
+     * @param guid
+     * @param uid
+     */
+    public SFSFile(String name, int mode, long time, long guid, long uid) {
+        super(name, mode, time, guid, uid);
+    }
 }

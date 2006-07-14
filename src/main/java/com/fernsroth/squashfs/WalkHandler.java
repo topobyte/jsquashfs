@@ -12,11 +12,11 @@ import com.fernsroth.squashfs.model.Directory;
  */
 public interface WalkHandler {
 
-	/**
-	 * @param path the path where the file resides.
-	 * @param file the file visited.
-	 * @throws Exception 
-	 */
-	void visit(Directory[] path, BaseFile file) throws Exception;
+    /**
+     * @param path the path where the file resides.
+     * @param file the file visited.
+     * @throws Exception 
+     */
+    void visit(Directory[] path, BaseFile file) throws Exception;
 
 }

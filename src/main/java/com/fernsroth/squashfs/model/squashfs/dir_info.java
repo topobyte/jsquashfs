@@ -12,44 +12,44 @@ import java.util.List;
  */
 public class dir_info {
 
-	/**
-	 * 
-	 */
-	public dir_ent dir_ent;
+    /**
+     * 
+     */
+    public dir_ent dir_ent;
 
-	/**
-	 * 
-	 */
-	public long directory_count;
+    /**
+     * 
+     */
+    public long directory_count;
 
-	/**
-	 * 
-	 */
-	public boolean dir_is_ldir;
+    /**
+     * 
+     */
+    public boolean dir_is_ldir;
 
-	/**
-	 * 
-	 */
-	public List<dir_ent> list = new ArrayList<dir_ent>();
+    /**
+     * 
+     */
+    public List<dir_ent> list = new ArrayList<dir_ent>();
 
-	/**
-	 * 
-	 */
-	public long current_count;
+    /**
+     * 
+     */
+    public long current_count;
 
-	/**
-	 * 
-	 */
-	public long byte_count;
+    /**
+     * 
+     */
+    public long byte_count;
 
-	/**
-	 * 
-	 */
-	public long count;
+    /**
+     * 
+     */
+    public long count;
 
-	/**
-	 * 
-	 */
-	public String pathname;
+    /**
+     * 
+     */
+    public String pathname;
 
 }

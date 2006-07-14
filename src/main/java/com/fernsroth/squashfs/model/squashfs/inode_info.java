@@ -9,34 +9,34 @@ package com.fernsroth.squashfs.model.squashfs;
  */
 public class inode_info {
 
-	/**
-	 * 
-	 */
-	public long nlink;
+    /**
+     * 
+     */
+    public long nlink;
 
-	/**
-	 * 
-	 */
-	public long inode_number;
+    /**
+     * 
+     */
+    public long inode_number;
 
-	/**
-	 * 
-	 */
-	public stat buf;
+    /**
+     * 
+     */
+    public stat buf;
 
-	/**
-	 * 
-	 */
-	public inode_info next;
+    /**
+     * 
+     */
+    public inode_info next;
 
-	/**
-	 * 
-	 */
-	public long inode;
+    /**
+     * 
+     */
+    public long inode;
 
-	/**
-	 * 
-	 */
-	public int type;
+    /**
+     * 
+     */
+    public int type;
 
 }

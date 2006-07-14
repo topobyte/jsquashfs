@@ -36,189 +36,189 @@ import com.fernsroth.squashfs.model.SymLink;
  */
 public class OutputWalkHandler implements WalkHandler {
 
-	/**
-	 * an identity transformer.
-	 */
-	private static Transformer identityTransformer;
+    /**
+     * an identity transformer.
+     */
+    private static Transformer identityTransformer;
 
-	/**
-	 * the reader.
-	 */
-	private SquashFSReader reader;
+    /**
+     * the reader.
+     */
+    private SquashFSReader reader;
 
-	/**
-	 * the destination file.
-	 */
-	private File destFile;
+    /**
+     * the destination file.
+     */
+    private File destFile;
 
-	/**
-	 * mapping between directories and files.
-	 */
-	private Map<BaseFile, FileData> dataMap = new HashMap<BaseFile, FileData>();
+    /**
+     * mapping between directories and files.
+     */
+    private Map<BaseFile, FileData> dataMap = new HashMap<BaseFile, FileData>();
 
-	/**
-	 * the manifest xml.
-	 */
-	private Document manifest;
+    /**
+     * the manifest xml.
+     */
+    private Document manifest;
 
-	/**
-	 * the top level manifest element.
-	 */
-	private Element manifestElement;
+    /**
+     * the top level manifest element.
+     */
+    private Element manifestElement;
 
-	static {
-		try {
-			identityTransformer = TransformerFactory.newInstance()
-					.newTransformer();
-			identityTransformer.setOutputProperty(OutputKeys.INDENT, "yes");
-		} catch (TransformerConfigurationException e) {
-			throw new ExceptionInInitializerError(e);
-		} catch (TransformerFactoryConfigurationError e) {
-			throw new ExceptionInInitializerError(e);
-		}
-	}
+    static {
+        try {
+            identityTransformer = TransformerFactory.newInstance()
+                    .newTransformer();
+            identityTransformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        } catch (TransformerConfigurationException e) {
+            throw new ExceptionInInitializerError(e);
+        } catch (TransformerFactoryConfigurationError e) {
+            throw new ExceptionInInitializerError(e);
+        }
+    }
 
-	/**
-	 * @param reader the source file.
-	 * @param destFile the destination file.
-	 * @throws ParserConfigurationException 
-	 */
-	public OutputWalkHandler(SquashFSReader reader, File destFile)
-			throws ParserConfigurationException {
-		this.reader = reader;
-		this.destFile = destFile;
-		DocumentBuilder builder = DocumentBuilderFactory.newInstance()
-				.newDocumentBuilder();
-		this.manifest = builder.newDocument();
-		this.manifestElement = this.manifest.createElement("squashfs-manifest");
-		this.manifest.appendChild(this.manifestElement);
-	}
+    /**
+     * @param reader the source file.
+     * @param destFile the destination file.
+     * @throws ParserConfigurationException 
+     */
+    public OutputWalkHandler(SquashFSReader reader, File destFile)
+            throws ParserConfigurationException {
+        this.reader = reader;
+        this.destFile = destFile;
+        DocumentBuilder builder = DocumentBuilderFactory.newInstance()
+                .newDocumentBuilder();
+        this.manifest = builder.newDocument();
+        this.manifestElement = this.manifest.createElement("squashfs-manifest");
+        this.manifest.appendChild(this.manifestElement);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public void visit(Directory[] path, BaseFile file) throws IOException {
-		Node parent;
-		if (path.length == 0) {
-			parent = this.manifestElement;
-		} else {
-			parent = this.dataMap.get(path[path.length - 1])
-					.getManifestElement();
-		}
-		Element element = createManifestElement(parent, file);
+    /**
+     * {@inheritDoc}
+     */
+    public void visit(Directory[] path, BaseFile file) throws IOException {
+        Node parent;
+        if (path.length == 0) {
+            parent = this.manifestElement;
+        } else {
+            parent = this.dataMap.get(path[path.length - 1])
+                    .getManifestElement();
+        }
+        Element element = createManifestElement(parent, file);
 
-		// root
-		if (path.length == 0) {
-			this.dataMap.put(file, new FileData(this.destFile, element));
-		}
+        // root
+        if (path.length == 0) {
+            this.dataMap.put(file, new FileData(this.destFile, element));
+        }
 
-		// non-root
-		else {
-			File parentFile = this.dataMap.get(path[path.length - 1]).getFile();
-			File f = new File(parentFile, fixName(file.getName()));
-			if (file instanceof Directory) {
-				f.mkdirs();
-			} else if (file instanceof SFSSquashedFile) {
-				element.setAttribute("file", SquashFSUtils.getRelativePath(
-						this.destFile, f));
-				FileOutputStream outFile = new FileOutputStream(f);
-				this.reader.writeFile((SFSSquashedFile) file, outFile);
-				outFile.close();
-			}
-			this.dataMap.put(file, new FileData(f, element));
-		}
-	}
+        // non-root
+        else {
+            File parentFile = this.dataMap.get(path[path.length - 1]).getFile();
+            File f = new File(parentFile, fixName(file.getName()));
+            if (file instanceof Directory) {
+                f.mkdirs();
+            } else if (file instanceof SFSSquashedFile) {
+                element.setAttribute("file", SquashFSUtils.getRelativePath(
+                        this.destFile, f));
+                FileOutputStream outFile = new FileOutputStream(f);
+                this.reader.writeFile((SFSSquashedFile) file, outFile);
+                outFile.close();
+            }
+            this.dataMap.put(file, new FileData(f, element));
+        }
+    }
 
-	/**
-	 * fix a name for the platform.
-	 * @param name the name to fix.
-	 * @return the normalized name.
-	 */
-	private String fixName(String name) {
-		return name;
-	}
+    /**
+     * fix a name for the platform.
+     * @param name the name to fix.
+     * @return the normalized name.
+     */
+    private String fixName(String name) {
+        return name;
+    }
 
-	/**
-	 * creates a manifest element.
-	 * @param parent parent node.
-	 * @param file the file to create it from.
-	 * @return the manifest element.
-	 */
-	private Element createManifestElement(Node parent, BaseFile file) {
-		Element elem;
-		if (file instanceof Directory) {
-			elem = this.manifest.createElement("directory");
-		} else if (file instanceof SFSSquashedFile) {
-			elem = this.manifest.createElement("file");
-		} else if (file instanceof SymLink) {
-			elem = this.manifest.createElement("symbolic-link");
-			elem.setAttribute("link", ((SymLink) file).getLinkName());
-		} else {
-			throw new RuntimeException("unknown file type '"
-					+ file.getClass().getName() + "'");
-		}
-		if (file.getName() != null) {
-			elem.setAttribute("name", file.getName());
-		}
-		elem.setAttribute("uid", Long.toString(file.getUid()));
-		elem.setAttribute("guid", Long.toString(file.getGuid()));
-		elem.setAttribute("mode", SquashFSUtils.getModeString(file));
-		elem.setAttribute("mtime", SquashFSUtils.ISO8601_FORMAT
-				.format(SquashFSUtils.getDateFromMTime(file.getMTime())));
-		parent.appendChild(elem);
-		return elem;
-	}
+    /**
+     * creates a manifest element.
+     * @param parent parent node.
+     * @param file the file to create it from.
+     * @return the manifest element.
+     */
+    private Element createManifestElement(Node parent, BaseFile file) {
+        Element elem;
+        if (file instanceof Directory) {
+            elem = this.manifest.createElement("directory");
+        } else if (file instanceof SFSSquashedFile) {
+            elem = this.manifest.createElement("file");
+        } else if (file instanceof SymLink) {
+            elem = this.manifest.createElement("symbolic-link");
+            elem.setAttribute("link", ((SymLink) file).getLinkName());
+        } else {
+            throw new RuntimeException("unknown file type '"
+                    + file.getClass().getName() + "'");
+        }
+        if (file.getName() != null) {
+            elem.setAttribute("name", file.getName());
+        }
+        elem.setAttribute("uid", Long.toString(file.getUid()));
+        elem.setAttribute("guid", Long.toString(file.getGuid()));
+        elem.setAttribute("mode", SquashFSUtils.getModeString(file));
+        elem.setAttribute("mtime", SquashFSUtils.ISO8601_FORMAT
+                .format(SquashFSUtils.getDateFromMTime(file.getMTime())));
+        parent.appendChild(elem);
+        return elem;
+    }
 
-	/**
-	 * writes the manifest file.
-	 * @param manifestFile the manifest file to write.
-	 * @throws IOException 
-	 * @throws TransformerException 
-	 */
-	public void writeManifest(File manifestFile) throws IOException,
-			TransformerException {
-		manifestFile.createNewFile();
+    /**
+     * writes the manifest file.
+     * @param manifestFile the manifest file to write.
+     * @throws IOException 
+     * @throws TransformerException 
+     */
+    public void writeManifest(File manifestFile) throws IOException,
+            TransformerException {
+        manifestFile.createNewFile();
 
-		identityTransformer.transform(new DOMSource(this.manifest),
-				new StreamResult(manifestFile));
-	}
+        identityTransformer.transform(new DOMSource(this.manifest),
+                new StreamResult(manifestFile));
+    }
 
-	/**
-	 * contains data about a path.
-	 */
-	private class FileData {
+    /**
+     * contains data about a path.
+     */
+    private class FileData {
 
-		/**
-		 * the file.
-		 */
-		private File file;
+        /**
+         * the file.
+         */
+        private File file;
 
-		/**
-		 * the manifest element. 
-		 */
-		private Element element;
+        /**
+         * the manifest element. 
+         */
+        private Element element;
 
-		/**
-		 * @param file the file.
-		 * @param manifestElement the manifest element.
-		 */
-		public FileData(File file, Element manifestElement) {
-			this.file = file;
-			this.element = manifestElement;
-		}
+        /**
+         * @param file the file.
+         * @param manifestElement the manifest element.
+         */
+        public FileData(File file, Element manifestElement) {
+            this.file = file;
+            this.element = manifestElement;
+        }
 
-		/**
-		 * @return the file
-		 */
-		public File getFile() {
-			return this.file;
-		}
+        /**
+         * @return the file
+         */
+        public File getFile() {
+            return this.file;
+        }
 
-		/**
-		 * @return the manifestElement
-		 */
-		public Element getManifestElement() {
-			return this.element;
-		}
-	}
+        /**
+         * @return the manifestElement
+         */
+        public Element getManifestElement() {
+            return this.element;
+        }
+    }
 }

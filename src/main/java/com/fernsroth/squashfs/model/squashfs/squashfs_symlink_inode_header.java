@@ -14,21 +14,21 @@ import com.fernsroth.easyio.field.FieldUINT32;
 @EasyIOClass(pack = 1)
 public class squashfs_symlink_inode_header extends squashfs_base_inode_header {
 
-	/**
-	 * see squashfs.
-	 */
-	@FieldUINT32
-	public long nlink;
+    /**
+     * see squashfs.
+     */
+    @FieldUINT32
+    public long nlink;
 
-	/**
-	 * see squashfs.
-	 */
-	@FieldUINT16
-	public int symlink_size;
+    /**
+     * see squashfs.
+     */
+    @FieldUINT16
+    public int symlink_size;
 
-	/**
-	 * see squashfs.
-	 */
-	public String symlink;
-	// TODO write a rule to do this.
+    /**
+     * see squashfs.
+     */
+    public String symlink;
+    // TODO write a rule to do this.
 }

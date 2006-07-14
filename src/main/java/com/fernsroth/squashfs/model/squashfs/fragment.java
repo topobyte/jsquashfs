@@ -9,18 +9,18 @@ package com.fernsroth.squashfs.model.squashfs;
  */
 public class fragment {
 
-	/**
-	 * 
-	 */
-	public int index;
+    /**
+     * 
+     */
+    public int index;
 
-	/**
-	 * 
-	 */
-	public int offset;
+    /**
+     * 
+     */
+    public int offset;
 
-	/**
-	 * 
-	 */
-	public long size;
+    /**
+     * 
+     */
+    public long size;
 }

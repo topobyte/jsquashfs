@@ -11,5 +11,5 @@ import com.fernsroth.easyio.EasyIOClass;
  */
 @EasyIOClass(pack = 1)
 public class squashfs_lreg_inode_header {
-	// TODO
+    // TODO
 }

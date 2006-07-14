@@ -9,58 +9,58 @@ package com.fernsroth.squashfs.model.squashfs;
  */
 public class directory {
 
-	/**
-	 * 
-	 */
-	public byte[] buff;
+    /**
+     * 
+     */
+    public byte[] buff;
 
-	/**
-	 * 
-	 */
-	public int buffp;
+    /**
+     * 
+     */
+    public int buffp;
 
-	/**
-	 * 
-	 */
-	public int size;
+    /**
+     * 
+     */
+    public int size;
 
-	/**
-	 * 
-	 */
-	public int entry_count;
+    /**
+     * 
+     */
+    public int entry_count;
 
-	/**
-	 * 
-	 */
-	public int index_count_p;
+    /**
+     * 
+     */
+    public int index_count_p;
 
-	/**
-	 * 
-	 */
-	public int entry_count_p;
+    /**
+     * 
+     */
+    public int entry_count_p;
 
-	/**
-	 * 
-	 */
-	public cached_dir_index[] index;
+    /**
+     * 
+     */
+    public cached_dir_index[] index;
 
-	/**
-	 * 
-	 */
-	public int i_count;
+    /**
+     * 
+     */
+    public int i_count;
 
-	/**
-	 * 
-	 */
-	public int i_size;
+    /**
+     * 
+     */
+    public int i_size;
 
-	/**
-	 * 
-	 */
-	public long start_block;
+    /**
+     * 
+     */
+    public long start_block;
 
-	/**
-	 * 
-	 */
-	public long inode_number;
+    /**
+     * 
+     */
+    public long inode_number;
 }

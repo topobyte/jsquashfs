@@ -13,26 +13,26 @@ import com.fernsroth.easyio.field.FieldUINT8;
  */
 @EasyIOClass(pack = 1)
 public class squashfs_dir_index {
-	/**
-	 * 
-	 */
-	@FieldUINT32
-	public long index;
+    /**
+     * 
+     */
+    @FieldUINT32
+    public long index;
 
-	/**
-	 * 
-	 */
-	@FieldUINT32
-	public long start_block;
+    /**
+     * 
+     */
+    @FieldUINT32
+    public long start_block;
 
-	/**
-	 * 
-	 */
-	@FieldUINT8
-	public int size;
+    /**
+     * 
+     */
+    @FieldUINT8
+    public int size;
 
-	/**
-	 * 
-	 */
-	public String name;
+    /**
+     * 
+     */
+    public String name;
 }

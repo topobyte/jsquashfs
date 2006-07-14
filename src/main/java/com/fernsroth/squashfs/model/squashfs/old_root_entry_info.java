@@ -8,23 +8,23 @@ package com.fernsroth.squashfs.model.squashfs;
  * @author Joseph M. Ferner (Near Infinity Corporation)
  */
 public class old_root_entry_info {
-	/**
-	 * 
-	 */
-	public String name;
+    /**
+     * 
+     */
+    public String name;
 
-	/**
-	 * 
-	 */
-	public long inode;
+    /**
+     * 
+     */
+    public long inode;
 
-	/**
-	 * 
-	 */
-	public int type;
+    /**
+     * 
+     */
+    public int type;
 
-	/**
-	 * 
-	 */
-	public int inode_number;
+    /**
+     * 
+     */
+    public int inode_number;
 }

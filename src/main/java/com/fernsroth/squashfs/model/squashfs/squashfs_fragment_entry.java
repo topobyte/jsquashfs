@@ -14,22 +14,22 @@ import com.fernsroth.easyio.field.FieldUINT32;
 @EasyIOClass(pack = 1)
 public class squashfs_fragment_entry {
 
-	/**
-	 * see squashfs_fs.h.
-	 */
-	@FieldINT64
-	public long start_block;
+    /**
+     * see squashfs_fs.h.
+     */
+    @FieldINT64
+    public long start_block;
 
-	/**
-	 * see squashfs_fs.h.
-	 */
-	@FieldUINT32
-	public long size;
+    /**
+     * see squashfs_fs.h.
+     */
+    @FieldUINT32
+    public long size;
 
-	/**
-	 * see squashfs_fs.h.
-	 */
-	@FieldUINT32
-	public long unused;
+    /**
+     * see squashfs_fs.h.
+     */
+    @FieldUINT32
+    public long unused;
 
 }

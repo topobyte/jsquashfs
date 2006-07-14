@@ -11,11 +11,11 @@ import java.util.Date;
  */
 public class DefaultSquashFSSystem implements SquashFSSystem {
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public Date getCurrentDate() {
-		return new Date();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public Date getCurrentDate() {
+        return new Date();
+    }
 
 }

@@ -9,19 +9,19 @@ package com.fernsroth.squashfs.model.squashfs;
  */
 public class duplicate_buffer_handle {
 
-	/**
-	 * 
-	 */
-	public byte[] ptrdata;
-	
-	/**
-	 * 
-	 */
-	public int ptr;
+    /**
+     * 
+     */
+    public byte[] ptrdata;
 
-	/**
-	 * 
-	 */
-	public long start;
+    /**
+     * 
+     */
+    public int ptr;
+
+    /**
+     * 
+     */
+    public long start;
 
 }

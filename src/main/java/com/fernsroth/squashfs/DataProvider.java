@@ -15,28 +15,28 @@ import com.fernsroth.squashfs.model.Manifest;
  */
 public interface DataProvider {
 
-	/**
-	 * @param source source manifest.
-	 * @param bf the file to get the length from.
-	 * @return the length of the file.
-	 * @throws IOException 
-	 */
-	long getLength(Manifest source, BaseFile bf) throws IOException;
+    /**
+     * @param source source manifest.
+     * @param bf the file to get the length from.
+     * @return the length of the file.
+     * @throws IOException 
+     */
+    long getLength(Manifest source, BaseFile bf) throws IOException;
 
-	/**
-	 * @param source source manifest.
-	 * @param bf the file to get the ino from.
-	 * @return the ino.
-	 */
-	int getIno(Manifest source, BaseFile bf);
+    /**
+     * @param source source manifest.
+     * @param bf the file to get the ino from.
+     * @return the ino.
+     */
+    int getIno(Manifest source, BaseFile bf);
 
-	/**
-	 * @param source source manifest.
-	 * @param bf the file name.
-	 * @return the random access source.
-	 * @throws IOException 
-	 */
-	IRandomAccessSource getData(Manifest source, BaseFile bf)
-			throws IOException;
+    /**
+     * @param source source manifest.
+     * @param bf the file name.
+     * @return the random access source.
+     * @throws IOException 
+     */
+    IRandomAccessSource getData(Manifest source, BaseFile bf)
+            throws IOException;
 
 }
