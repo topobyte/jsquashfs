@@ -11,6 +11,7 @@ import java.util.Date;
 
 import com.fernsroth.squashfs.model.BaseFile;
 import com.fernsroth.squashfs.model.Directory;
+import com.fernsroth.squashfs.model.SFSFile;
 import com.fernsroth.squashfs.model.SFSSquashedFile;
 import com.fernsroth.squashfs.model.SymLink;
 import com.fernsroth.squashfs.model.squashfs.stat;
@@ -51,7 +52,7 @@ public final class SquashFSUtils {
             line += "d";
         } else if (baseFile instanceof SymLink) {
             line += "l";
-        } else if (baseFile instanceof SFSSquashedFile) {
+        } else if (baseFile instanceof SFSFile) {
             line += "-";
         }
         line += getPermissionsString((baseFile.getMode() >> 6) & 0x07);

@@ -121,6 +121,11 @@
 			<version>1.0b3</version>
 			<scope>plugin</scope>
 		</dependency>
+		<dependency>
+			<groupId>swt</groupId>
+			<artifactId>swt-win32</artifactId>
+			<version>3.1.2</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>

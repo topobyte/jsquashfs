@@ -19,6 +19,11 @@ public final class SquashFSGlobals {
     public static final String DOCTYPE_SYSTEM = "http://jsquashfs.sourceforge.net/dtds/jsquashfs.dtd";
 
     /**
+     * the name of this project.
+     */
+    public static final String PROJECT_NAME = "jSquashFS";
+
+    /**
      * constructor. 
      */
     private SquashFSGlobals() {
