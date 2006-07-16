@@ -12,7 +12,6 @@ import java.util.Date;
 import com.fernsroth.squashfs.model.BaseFile;
 import com.fernsroth.squashfs.model.Directory;
 import com.fernsroth.squashfs.model.SFSFile;
-import com.fernsroth.squashfs.model.SFSSquashedFile;
 import com.fernsroth.squashfs.model.SymLink;
 import com.fernsroth.squashfs.model.squashfs.stat;
 
@@ -72,6 +71,21 @@ public final class SquashFSUtils {
         line += (permissions & 0x02) == 0x02 ? "w" : "-";
         line += (permissions & 0x01) == 0x01 ? "x" : "-";
         return line;
+    }
+
+    /**
+     * gets the combination mode.
+     * @param owner the owner mode.
+     * @param group the group mode.
+     * @param other the other mode.
+     * @return get the combination mode.
+     */
+    public static int getMode(int owner, int group, int other) {
+        int mode = 0;
+        mode |= (owner & 0x7) << 6;
+        mode |= (group & 0x7) << 3;
+        mode |= (other & 0x7) << 0;
+        return mode;
     }
 
     /**
@@ -188,5 +202,32 @@ public final class SquashFSUtils {
                 root.getAbsolutePath().length() + 1);
         rel = rel.replaceAll("\\\\", "/");
         return rel;
+    }
+
+    /**
+     * gets the owner mode from the mode.
+     * @param mode the mode to get permisions from.
+     * @return the owner mode.
+     */
+    public static int getOwnerMode(int mode) {
+        return (mode >> 6) & 0x07;
+    }
+
+    /**
+     * gets the group mode from the mode.
+     * @param mode the mode to get permisions from.
+     * @return the group mode.
+     */
+    public static int getGroupMode(int mode) {
+        return (mode >> 3) & 0x07;
+    }
+
+    /**
+     * gets the other mode from the mode.
+     * @param mode the mode to get permisions from.
+     * @return the other mode.
+     */
+    public static int getOtherMode(int mode) {
+        return (mode >> 0) & 0x07;
     }
 }

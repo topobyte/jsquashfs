@@ -84,4 +84,39 @@ public abstract class BaseFile {
         return this.name;
     }
 
+    /**
+     * @param guid the guid to set
+     */
+    public void setGuid(long guid) {
+        this.guid = guid;
+    }
+
+    /**
+     * @param mode the mode to set
+     */
+    public void setMode(int mode) {
+        this.mode = mode;
+    }
+
+    /**
+     * @param time the mTime to set
+     */
+    public void setMTime(long time) {
+        this.mTime = time;
+    }
+
+    /**
+     * @param name the name to set
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * @param uid the uid to set
+     */
+    public void setUid(long uid) {
+        this.uid = uid;
+    }
+
 }

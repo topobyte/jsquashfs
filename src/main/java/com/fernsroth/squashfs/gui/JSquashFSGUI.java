@@ -8,6 +8,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -28,6 +30,11 @@ import com.fernsroth.squashfs.model.Manifest;
  * @author Joseph M. Ferner (Near Infinity Corporation)
  */
 public class JSquashFSGUI {
+    /**
+     * logging.
+     */
+    private static Log log = LogFactory.getLog(JSquashFSGUI.class);
+
     /**
      * the SWT display.
      */
@@ -77,8 +84,13 @@ public class JSquashFSGUI {
 
         this.shell.open();
         while (!this.shell.isDisposed()) {
-            if (!this.display.readAndDispatch()) {
-                this.display.sleep();
+            try {
+                if (!this.display.readAndDispatch()) {
+                    this.display.sleep();
+                }
+            } catch (Throwable e) {
+                // TODO catch and display error.
+                log.error("error", e);
             }
         }
         this.display.dispose();
@@ -137,8 +149,11 @@ public class JSquashFSGUI {
             this.manifest = SquashFSManifest.load(new FileInputStream(
                     sourceFile), sourceDir);
         } catch (SquashFSException e) {
+            // TODO remove
         } catch (FileNotFoundException e) {
+            // TODO remove
         } catch (IOException e) {
+            // TODO remove
         }
 
         this.content.loadManifest(this.manifest);

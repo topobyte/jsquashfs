@@ -4,11 +4,9 @@
 package com.fernsroth.squashfs.gui;
 
 import java.io.InputStream;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
@@ -20,6 +18,8 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -32,6 +32,7 @@ import com.fernsroth.squashfs.model.BaseFile;
 import com.fernsroth.squashfs.model.Directory;
 import com.fernsroth.squashfs.model.Manifest;
 import com.fernsroth.squashfs.model.SFSFile;
+import com.fernsroth.squashfs.model.SFSSourceFile;
 import com.fernsroth.squashfs.model.SymLink;
 
 /**
@@ -46,24 +47,29 @@ public class ContentComposite extends SashForm {
     protected static final int COLUMN_NAME = 0;
 
     /**
+     * the source column index.
+     */
+    protected static final int COLUMN_SOURCE = 1;
+
+    /**
      * the guid column index.
      */
-    protected static final int COLUMN_GUID = 1;
+    protected static final int COLUMN_GUID = 2;
 
     /**
      * the uid column index.
      */
-    protected static final int COLUMN_UID = 2;
+    protected static final int COLUMN_UID = 3;
 
     /**
      * the mode column index.
      */
-    protected static final int COLUMN_MODE = 3;
+    protected static final int COLUMN_MODE = 4;
 
     /**
      * the mtime column index.
      */
-    protected static final int COLUMN_MTIME = 4;
+    protected static final int COLUMN_MTIME = 5;
 
     /**
      * tree view showing the folders.
@@ -111,6 +117,11 @@ public class ContentComposite extends SashForm {
     private TableComparator tableComparator = new TableComparator();
 
     /**
+     * the loaded manifest.
+     */
+    private Manifest loadedManifest;
+
+    /**
      * @param parent the parent shell.
      * @param style the style.
      */
@@ -148,8 +159,28 @@ public class ContentComposite extends SashForm {
             }
         });
 
-        this.fileTable = new Table(this, SWT.BORDER | SWT.FULL_SELECTION);
+        this.fileTable = new Table(this, SWT.BORDER | SWT.FULL_SELECTION
+                | SWT.MULTI);
         this.fileTable.setHeaderVisible(true);
+        this.fileTable.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseDoubleClick(MouseEvent e) {
+                for (TableItem ti : ContentComposite.this.fileTable
+                        .getSelection()) {
+                    if (ti.getData() instanceof Directory) {
+                        ContentComposite.this.selectItem((Directory) ti
+                                .getData(), null);
+                    }
+                }
+            }
+
+            @Override
+            public void mouseUp(MouseEvent e) {
+                if (e.button == 3) {
+                    showFileTableContextMenu();
+                }
+            }
+        });
         TableColumn tc;
         tc = new TableColumn(this.fileTable, SWT.LEFT);
         tc.setText("Name");
@@ -158,32 +189,99 @@ public class ContentComposite extends SashForm {
                 ContentComposite.COLUMN_NAME));
 
         tc = new TableColumn(this.fileTable, SWT.LEFT);
+        tc.setText("Source File");
+        tc.setWidth(250);
+        tc.addSelectionListener(new FileTableSelectionAdapter(
+                ContentComposite.COLUMN_GUID));
+
+        tc = new TableColumn(this.fileTable, SWT.LEFT);
         tc.setText("Group ID");
-        tc.setWidth(100);
+        tc.setWidth(60);
         tc.addSelectionListener(new FileTableSelectionAdapter(
                 ContentComposite.COLUMN_GUID));
 
         tc = new TableColumn(this.fileTable, SWT.LEFT);
         tc.setText("User ID");
-        tc.setWidth(100);
+        tc.setWidth(60);
         tc.addSelectionListener(new FileTableSelectionAdapter(
                 ContentComposite.COLUMN_UID));
 
         tc = new TableColumn(this.fileTable, SWT.LEFT);
         tc.setText("Mode");
-        tc.setWidth(100);
+        tc.setWidth(75);
         tc.addSelectionListener(new FileTableSelectionAdapter(
                 ContentComposite.COLUMN_MODE));
 
         tc = new TableColumn(this.fileTable, SWT.LEFT);
         tc.setText("Modified Time");
-        tc.setWidth(100);
+        tc.setWidth(125);
         tc.addSelectionListener(new FileTableSelectionAdapter(
                 ContentComposite.COLUMN_MTIME));
 
         this.setWeights(new int[] { 20, 80 });
 
         loadManifest(null);
+    }
+
+    /**
+     * show the file table context menu.
+     * @param location the location to show it at.
+     */
+    protected void showFileTableContextMenu() {
+        MenuItem mi;
+        Menu popupMenu = new Menu(this.fileTable.getShell(), SWT.POP_UP);
+
+        mi = new MenuItem(popupMenu, SWT.PUSH);
+        mi.setText("Properties");
+        mi.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                List<BaseFile> selected = new ArrayList<BaseFile>();
+                for (TableItem ti : ContentComposite.this.fileTable
+                        .getSelection()) {
+                    selected.add((BaseFile) ti.getData());
+                }
+                showProperties(selected);
+            }
+        });
+
+        popupMenu.setVisible(true);
+    }
+
+    /**
+     * show the properties dialog for the base files.
+     * @param selected the file to show properties dialog for.
+     */
+    protected void showProperties(List<BaseFile> selected) {
+        PropertiesDialog dialog = new PropertiesDialog(this.getShell(),
+                SWT.APPLICATION_MODAL, selected);
+        if (dialog.open()) {
+            reload();
+        }
+    }
+
+    /**
+     * reload the data in the file table and folder tree.
+     */
+    private void reload() {
+        int[] fileTableSelection = this.fileTable.getSelectionIndices();
+        TreeItem[] folderTreeSelection = this.folderTree.getSelection();
+        Directory[] folderTreeBaseFileSelection = new Directory[folderTreeSelection.length];
+        for (int i = 0; i < folderTreeSelection.length; i++) {
+            folderTreeBaseFileSelection[i] = (Directory) folderTreeSelection[i]
+                    .getData();
+        }
+        loadManifest(this.loadedManifest);
+        folderTreeSelection = findTreeItems(this.folderTree.getItems()[0],
+                folderTreeBaseFileSelection).toArray(new TreeItem[] {});
+        for (TreeItem ti : folderTreeSelection) {
+            expandToItem(ti);
+        }
+        this.folderTree.setSelection(folderTreeSelection);
+        if (folderTreeSelection.length > 0) {
+            selectItem(folderTreeBaseFileSelection[0], null);
+        }
+        this.fileTable.setSelection(fileTableSelection);
     }
 
     /**
@@ -205,7 +303,11 @@ public class ContentComposite extends SashForm {
     private void selectItem(Directory dir, TreeItem treeItem) {
         // find tree item.
         if (treeItem == null) {
-            treeItem = findTreeItem(this.folderTree.getItems()[0], dir);
+            List<TreeItem> treeItems = findTreeItems(
+                    this.folderTree.getItems()[0], new Directory[] { dir });
+            if (treeItems.size() > 0) {
+                treeItem = treeItems.get(0);
+            }
         }
         if (treeItem == null) {
             throw new RuntimeException("tree item not found");
@@ -221,10 +323,13 @@ public class ContentComposite extends SashForm {
         this.tableItems.addAll(dir.getSubentries());
         reloadTable();
 
-        if (this.previousSelectedTreeItem != null) {
+        if (this.previousSelectedTreeItem != null
+                && !this.previousSelectedTreeItem.isDisposed()) {
             this.previousSelectedTreeItem.setImage(this.folderImageClosed);
         }
         treeItem.setImage(this.folderImageOpen);
+
+        this.folderTree.setSelection(new TreeItem[] { treeItem });
 
         this.previousSelectedTreeItem = treeItem;
     }
@@ -243,14 +348,21 @@ public class ContentComposite extends SashForm {
         TableItem ti;
         for (BaseFile bf : this.tableItems) {
             ti = new TableItem(this.fileTable, 0);
+            ti.setData(bf);
             ti.setText(ContentComposite.COLUMN_NAME, bf.getName());
+            if (bf instanceof SFSSourceFile) {
+                SFSSourceFile sf = (SFSSourceFile) bf;
+                String source = sf.getSourceFile() == null ? "" : sf
+                        .getSourceFile().toString();
+                ti.setText(ContentComposite.COLUMN_SOURCE, source);
+            }
             ti.setText(ContentComposite.COLUMN_GUID, Long
                     .toString(bf.getGuid()));
             ti.setText(ContentComposite.COLUMN_UID, Long.toString(bf.getUid()));
             ti.setText(ContentComposite.COLUMN_MODE, SquashFSUtils
                     .getModeString(bf));
-            ti.setText(ContentComposite.COLUMN_MTIME, formatDate(SquashFSUtils
-                    .getDateFromMTime(bf.getMTime())));
+            ti.setText(ContentComposite.COLUMN_MTIME, GUIUtils.formatMTime(bf
+                    .getMTime()));
             if (bf instanceof Directory) {
                 ti.setImage(this.folderImageClosed);
             } else if (bf instanceof SFSFile) {
@@ -259,15 +371,6 @@ public class ContentComposite extends SashForm {
                 ti.setImage(this.linkImage);
             }
         }
-    }
-
-    /**
-     * formats a date for display.
-     * @param date the date to format.
-     * @return the string.
-     */
-    private String formatDate(Date date) {
-        return new SimpleDateFormat().format(date);
     }
 
     /**
@@ -285,20 +388,21 @@ public class ContentComposite extends SashForm {
     /**
      * find a directory in the tree.
      * @param rootItem the root item to start searching from.
-     * @param dir the directory to find.
-     * @return the tree item if found. null, if not found.
+     * @param dirs the directories to find.
+     * @return the tree items found.
      */
-    private TreeItem findTreeItem(TreeItem rootItem, Directory dir) {
-        if (rootItem.getData() == dir) {
-            return rootItem;
-        }
-        for (TreeItem child : rootItem.getItems()) {
-            TreeItem found = findTreeItem(child, dir);
-            if (found != null) {
-                return found;
+    private List<TreeItem> findTreeItems(TreeItem rootItem, Directory dirs[]) {
+        List<TreeItem> results = new ArrayList<TreeItem>();
+        for (Directory dir : dirs) {
+            if (rootItem.getData() == dir) {
+                results.add(rootItem);
             }
         }
-        return null;
+        for (TreeItem child : rootItem.getItems()) {
+            List<TreeItem> found = findTreeItems(child, dirs);
+            results.addAll(found);
+        }
+        return results;
     }
 
     /**
@@ -313,6 +417,7 @@ public class ContentComposite extends SashForm {
             addFolders(manifest.getRoot(), item);
             item.setExpanded(true);
         }
+        this.loadedManifest = manifest;
     }
 
     /**

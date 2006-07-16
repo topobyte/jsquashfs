@@ -12,17 +12,32 @@ public class stat implements Cloneable {
     /**
      * 
      */
-    public static final int S_IRUSR = 0x04 << 6;
+    public static final int S_IR = 0x04;
 
     /**
      * 
      */
-    public static final int S_IWUSR = 0x02 << 6;
+    public static final int S_IW = 0x02;
 
     /**
      * 
      */
-    public static final int S_IXUSR = 0x01 << 6;
+    public static final int S_IX = 0x01;
+
+    /**
+     * 
+     */
+    public static final int S_IRUSR = S_IR << 6;
+
+    /**
+     * 
+     */
+    public static final int S_IWUSR = S_IW << 6;
+
+    /**
+     * 
+     */
+    public static final int S_IXUSR = S_IX << 6;
 
     /**
      * 
