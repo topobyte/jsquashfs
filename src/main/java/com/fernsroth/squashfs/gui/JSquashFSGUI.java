@@ -13,14 +13,21 @@ import org.apache.commons.logging.LogFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 
+import com.fernsroth.easyio.EasyIORandomAccessFile;
+import com.fernsroth.squashfs.OutputWalkHandler;
 import com.fernsroth.squashfs.SquashFSGlobals;
 import com.fernsroth.squashfs.SquashFSManifest;
+import com.fernsroth.squashfs.SquashFSReader;
+import com.fernsroth.squashfs.SquashFSUtils;
 import com.fernsroth.squashfs.exception.SquashFSException;
 import com.fernsroth.squashfs.model.Directory;
 import com.fernsroth.squashfs.model.Manifest;
@@ -30,6 +37,16 @@ import com.fernsroth.squashfs.model.Manifest;
  * @author Joseph M. Ferner (Near Infinity Corporation)
  */
 public class JSquashFSGUI {
+    /**
+     * 
+     */
+    private final Cursor CURSOR_HOURGLASS;
+
+    /**
+     * 
+     */
+    private final Cursor CURSOR_ARROW;
+
     /**
      * logging.
      */
@@ -71,6 +88,8 @@ public class JSquashFSGUI {
      */
     public JSquashFSGUI(String[] args) {
         this.display = new Display();
+        this.CURSOR_HOURGLASS = new Cursor(this.display, SWT.CURSOR_WAIT);
+        this.CURSOR_ARROW = new Cursor(this.display, SWT.CURSOR_ARROW);
         this.shell = new Shell(this.display);
         this.shell.setLayout(new FillLayout());
 
@@ -119,6 +138,16 @@ public class JSquashFSGUI {
             }
         });
 
+        mi = new MenuItem(this.menuFile, SWT.PUSH);
+        mi.setText("Open...\tCtrl+O");
+        mi.setAccelerator(SWT.CTRL | 'O');
+        mi.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                onOpen();
+            }
+        });
+
         mi = new MenuItem(this.menuFile, SWT.SEPARATOR);
 
         mi = new MenuItem(this.menuFile, SWT.PUSH);
@@ -135,6 +164,55 @@ public class JSquashFSGUI {
     }
 
     /**
+     * 
+     */
+    protected void onOpen() {
+        // TODO check that the last loaded was saved.
+
+        FileDialog fd = new FileDialog(this.shell, SWT.OPEN);
+        fd.setText("Open...");
+        fd.setFilterExtensions(new String[] { "*.*", "*.xml", "*.mo" });
+        fd.setFilterNames(new String[] { "All Files (*.*)",
+                "Manifest Files (*.xml)", "Modules (*.mo)" });
+        String fileName;
+        if ((fileName = fd.open()) != null) {
+            this.shell.setCursor(this.CURSOR_HOURGLASS);
+            File f = new File(fileName);
+
+            try {
+                Manifest man = SquashFSManifest.load(new FileInputStream(f), f
+                        .getParentFile());
+                this.content.loadManifest(man);
+            } catch (Exception e1) {
+                try {
+                    File destFile = File.createTempFile("jsquashfs", "dir");
+                    destFile.delete();
+                    destFile.mkdirs();
+                    SquashFSReader reader = new SquashFSReader(
+                            new EasyIORandomAccessFile(f, "r"));
+                    OutputWalkHandler out = new OutputWalkHandler(reader,
+                            destFile);
+                    out.setIncludeMTimeInManfest(false);
+                    SquashFSUtils.walk(reader.getRootDirectory(), out);
+                    File manifestFile = new File(destFile, "manifest.xml");
+                    out.writeManifest(manifestFile);
+
+                    Manifest man = SquashFSManifest.load(new FileInputStream(
+                            manifestFile), manifestFile.getParentFile());
+                    this.content.loadManifest(man);
+                } catch (Exception e2) {
+                    MessageBox mb = new MessageBox(this.shell, SWT.OK
+                            | SWT.ICON_ERROR);
+                    mb.setText("Error Loading");
+                    mb.setMessage("Error Loading\n" + e2.getMessage());
+                }
+            } finally {
+                this.shell.setCursor(this.CURSOR_ARROW);
+            }
+        }
+    }
+
+    /**
      * creates a new file. 
      */
     protected void onNew() {
@@ -142,19 +220,6 @@ public class JSquashFSGUI {
 
         this.manifest = new Manifest();
         this.manifest.setRoot(new Directory(null, 0, 0, 0, 0));
-
-        try {
-            File sourceFile = new File("C:/temp/slax/manifest.xml");
-            File sourceDir = new File("C:/temp/slax/");
-            this.manifest = SquashFSManifest.load(new FileInputStream(
-                    sourceFile), sourceDir);
-        } catch (SquashFSException e) {
-            // TODO remove
-        } catch (FileNotFoundException e) {
-            // TODO remove
-        } catch (IOException e) {
-            // TODO remove
-        }
 
         this.content.loadManifest(this.manifest);
     }
