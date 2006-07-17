@@ -609,7 +609,7 @@ public final class SquashFSReader {
      */
     private void read_fragment_table() throws IOException, EasyIOException {
         EasyIOInputStream in = new EasyIOInputStream(this.source);
-        int i, indexes = (int) squashfs_constants
+        int i, j, indexes = (int) squashfs_constants
                 .SQUASHFS_FRAGMENT_INDEXES(this.superBlock.fragments);
         long[] fragment_table_index = new long[indexes];
 
@@ -636,12 +636,15 @@ public final class SquashFSReader {
         }
         /*}*/
 
-        for (i = 0; i < indexes; i++) {
+        for (j = 0, i = 0; i < indexes; i++) {
             byte[] buffer = read_block(fragment_table_index[i], null);
             EasyIOInputStream fragmentIn = new EasyIOInputStream(
                     new ByteArrayInputStream(buffer));
-            this.fragment_table[i * squashfs_constants.SQUASHFS_METADATA_SIZE] = fragmentIn
-                    .read(new squashfs_fragment_entry());
+            for (int z = 0; z < buffer.length
+                    / squashfs_constants.SQUASHFS_FRAGMENT_ENTRY_SIZE; z++) {
+                this.fragment_table[j++] = fragmentIn
+                        .read(new squashfs_fragment_entry());
+            }
             log.trace("Read fragment table block " + i + ", from "
                     + fragment_table_index[i] + ", length " + buffer.length);
         }

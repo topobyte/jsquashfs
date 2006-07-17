@@ -41,15 +41,44 @@ public class FileSystemDataProvider implements DataProvider {
      */
     public IRandomAccessSource getData(Manifest source, BaseFile bf)
             throws IOException {
+        File f = getFile(source, bf);
+        if (f == null) {
+            return null;
+        }
+        return new EasyIORandomAccessFile(f, "r");
+    }
+
+    /**
+     * gets the file from the source and base file.
+     * @param source the source.
+     * @param bf the base file.
+     * @return the file.
+     * @throws FileNotFoundException 
+     */
+    private File getFile(Manifest source, BaseFile bf)
+            throws FileNotFoundException {
+        if (bf == null || bf.getName() == null) {
+            return null;
+        }
+
+        File f = null;
         if (bf instanceof SFSSourceFile
                 && ((SFSSourceFile) bf).getSourceFile() != null) {
-            return new EasyIORandomAccessFile(((SFSSourceFile) bf)
-                    .getSourceFile(), "r");
+            f = ((SFSSourceFile) bf).getSourceFile();
         } else {
             String path = source.getPath(bf);
-            File f = new File(this.sourceDir, path);
-            return new EasyIORandomAccessFile(f, "r");
+            if (path == null) {
+                throw new FileNotFoundException("could not file '"
+                        + bf.getName() + "'");
+            }
+            f = new File(this.sourceDir, path);
         }
+
+        if (f == null) {
+            throw new FileNotFoundException("could not file '" + bf.getName()
+                    + "'");
+        }
+        return f;
     }
 
     /**
@@ -63,15 +92,10 @@ public class FileSystemDataProvider implements DataProvider {
      * {@inheritDoc}
      */
     public long getLength(Manifest source, BaseFile bf) throws IOException {
-        if (bf == null || bf.getName() == null) {
+        File f = getFile(source, bf);
+        if (f == null) {
             return 0;
         }
-        String path = source.getPath(bf);
-        if (path == null) {
-            throw new FileNotFoundException("could not file '" + bf.getName()
-                    + "'");
-        }
-        File f = new File(this.sourceDir, path);
         return f.length();
     }
 }
