@@ -416,7 +416,7 @@ public final class SquashFSWriter {
         this.check_data = false;
         this.no_fragments = false;
         this.always_use_fragments = false;
-        this.duplicate_checking = true;
+        this.duplicate_checking = false;
         this.nopad = false;
     }
 
@@ -941,8 +941,7 @@ public final class SquashFSWriter {
 
         if (this.superBlock.fragments % FRAG_SIZE == 0) {
             this.fragment_table = realloc(this.fragment_table,
-                    ((int) this.superBlock.fragments + FRAG_SIZE)
-                            * squashfs_constants.SQUASHFS_FRAGMENT_ENTRY_SIZE);
+                    (int) this.superBlock.fragments + FRAG_SIZE);
         }
         if (this.fragment_table[(int) this.superBlock.fragments] == null) {
             this.fragment_table[(int) this.superBlock.fragments] = new squashfs_fragment_entry();
@@ -1376,10 +1375,8 @@ public final class SquashFSWriter {
                 if ((dir.buffp + squashfs_constants.SQUASHFS_DIR_ENTRY_SIZE
                         + size - dir.index_count_p) > squashfs_constants.SQUASHFS_METADATA_SIZE) {
                     if (dir.i_count % squashfs_constants.I_COUNT_SIZE == 0) {
-                        dir.index = realloc(
-                                dir.index,
-                                (dir.i_count + squashfs_constants.I_COUNT_SIZE)
-                                        * squashfs_constants.CACHED_DIR_INDEX_SIZE);
+                        dir.index = realloc(dir.index, dir.i_count
+                                + squashfs_constants.I_COUNT_SIZE);
                     }
                     dir.index[dir.i_count].index.index = dir.buffp;
                     dir.index[dir.i_count].index.size = (int) (size - 1);
@@ -2003,8 +2000,14 @@ public final class SquashFSWriter {
                     && (dupl_ptr = duplicate(new read_from_buffer(), handle,
                             file_bytes, zzblock_listp, zzstart, blocks,
                             zzfragment, buff, frag_bytes)) == null) {
+                block_listp = zzblock_listp[0];
+                start = zzstart[0];
+                fragment = zzfragment[0];
                 duplicate_file[0] = true;
             } else {
+                block_listp = zzblock_listp[0];
+                start = zzstart[0];
+                fragment = zzfragment[0];
                 this.dest.seek(this.bytes);
                 this.dest.write(c_buffer, 0, (int) file_bytes);
                 this.bytes += file_bytes;
@@ -2014,16 +2017,20 @@ public final class SquashFSWriter {
             int[] zzblock_listp = new int[] { block_listp };
             long[] zzstart = new long[] { start };
             fragment[] zzfragment = new fragment[] { fragment };
-            if (this.duplicate_checking
-                    && (dupl_ptr = duplicate(new read_from_file(), handle,
-                            file_bytes, zzblock_listp, zzstart, blocks,
-                            zzfragment, buff, frag_bytes)) == null) {
+            if (this.duplicate_checking) {
+                dupl_ptr = duplicate(new read_from_file(), handle, file_bytes,
+                        zzblock_listp, zzstart, blocks, zzfragment, buff,
+                        frag_bytes);
                 start = zzstart[0];
-                this.bytes = start;
-                if (this.block_device == 0) {
-                    this.dest.setLength(this.bytes);
+                block_listp = zzblock_listp[0];
+                fragment = zzfragment[0];
+                if (dupl_ptr == null) {
+                    this.bytes = start;
+                    if (this.block_device == 0) {
+                        this.dest.setLength(this.bytes);
+                    }
+                    duplicate_file[0] = true;
                 }
-                duplicate_file[0] = true;
             }
         }
 
