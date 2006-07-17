@@ -1,5 +1,5 @@
 @echo off
 
-set CP=lib/*;lib/
+call lib/setclasspath.bat
 
-java -cp %CP% com.fernsroth.squashfs.Squashfs %*
+java -cp "%CP%" com.fernsroth.squashfs.Squashfs %*

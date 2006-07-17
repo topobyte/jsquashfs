@@ -5,8 +5,6 @@ package com.fernsroth.squashfs.gui;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -28,7 +26,6 @@ import com.fernsroth.squashfs.SquashFSGlobals;
 import com.fernsroth.squashfs.SquashFSManifest;
 import com.fernsroth.squashfs.SquashFSReader;
 import com.fernsroth.squashfs.SquashFSUtils;
-import com.fernsroth.squashfs.exception.SquashFSException;
 import com.fernsroth.squashfs.model.Directory;
 import com.fernsroth.squashfs.model.Manifest;
 
