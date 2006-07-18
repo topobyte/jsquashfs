@@ -5,6 +5,11 @@ package com.fernsroth.squashfs.gui;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.prefs.Preferences;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -34,6 +39,26 @@ import com.fernsroth.squashfs.model.Manifest;
  * @author Joseph M. Ferner (Near Infinity Corporation)
  */
 public class JSquashFSGUI {
+    /**
+     * new file.
+     */
+    private static final File NEW_FILE = new File("new");
+
+    /**
+     * prefix for recent files preferences.
+     */
+    private static final String PREF_RECENT_PREFIX = "recent";
+
+    /**
+     * number of recent files.
+     */
+    private static final int RECENT_FILE_COUNT = 4;
+
+    /**
+     * the recent file list index from the top of the file menu.
+     */
+    private static final int RECENT_FILE_LIST_INDEX = 4;
+
     /**
      * 
      */
@@ -85,6 +110,11 @@ public class JSquashFSGUI {
     private File workingFile;
 
     /**
+     * the modified status.
+     */
+    private boolean modified;
+
+    /**
      * constructor.
      * @param args the command line arguments.
      */
@@ -100,8 +130,6 @@ public class JSquashFSGUI {
         createMenu();
 
         this.content = new ContentComposite(this.shell, 0);
-
-        onNew();
 
         this.shell.open();
         while (!this.shell.isDisposed()) {
@@ -155,6 +183,18 @@ public class JSquashFSGUI {
             }
         });
 
+        mi = new MenuItem(this.menuFile, SWT.PUSH);
+        mi.setText("Close\tAlt+F4");
+        mi.setAccelerator(SWT.ALT | SWT.F4);
+        mi.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                onClose();
+            }
+        });
+
+        mi = new MenuItem(this.menuFile, SWT.SEPARATOR);
+
         mi = new MenuItem(this.menuFile, SWT.SEPARATOR);
 
         mi = new MenuItem(this.menuFile, SWT.PUSH);
@@ -168,13 +208,33 @@ public class JSquashFSGUI {
         });
 
         this.shell.setMenuBar(this.menu);
+
+        updateRecentFilesMenu();
+    }
+
+    /**
+     * open a recent file.
+     * @param mi the menu item containing the recent file.
+     */
+    protected void openRecentFile(MenuItem mi) {
+        // TODO Auto-generated method stub
+
+    }
+
+    /**
+     * called when the user tries to close the current document.
+     */
+    protected void onClose() {
+        closeWorkingFile();
     }
 
     /**
      * 
      */
     protected void onOpen() {
-        // TODO check that the last loaded was saved.
+        if (!closeWorkingFile()) {
+            return;
+        }
 
         FileDialog fd = new FileDialog(this.shell, SWT.OPEN);
         fd.setText("Open...");
@@ -224,11 +284,12 @@ public class JSquashFSGUI {
 
     /**
      * sets the working file name.
-     * @param workingFileName name of the working file.
+     * @param workingFile the working file.
      * @param modified the modified status.
      */
     private void setWorkingFileName(File workingFile, boolean modified) {
         this.workingFile = workingFile;
+        this.modified = modified;
         StringBuffer txt = new StringBuffer();
         txt.append(SquashFSGlobals.PROJECT_NAME);
         txt.append(" GUI");
@@ -246,12 +307,128 @@ public class JSquashFSGUI {
      * creates a new file. 
      */
     protected void onNew() {
-        // TODO check that the last loaded was saved.
+        if (!closeWorkingFile()) {
+            return;
+        }
 
         this.manifest = new Manifest();
         this.manifest.setRoot(new Directory(null, 0, 0, 0, 0));
 
         this.content.loadManifest(this.manifest);
+        setWorkingFileName(NEW_FILE, false);
+    }
+
+    /**
+     * check that the current working file is saved. 
+     * @return true, if it's ok to close. false, if not.
+     */
+    private boolean closeWorkingFile() {
+        if (isModified()) {
+            MessageBox mb = new MessageBox(this.shell, SWT.YES | SWT.NO
+                    | SWT.ICON_QUESTION);
+            mb.setText("Confirm Close");
+            mb
+                    .setMessage("The current file has been modified, are you sure you want to close?");
+            if (mb.open() != SWT.YES) {
+                return false;
+            }
+        }
+        if (this.workingFile != null) {
+            addRecentFile(this.workingFile);
+        }
+        setWorkingFileName(null, false);
+        this.content.loadManifest(null);
+
+        updateRecentFilesMenu();
+
+        return true;
+    }
+
+    /**
+     * 
+     */
+    private void updateRecentFilesMenu() {
+        List<File> recentFileList = getRecentFileList();
+
+        // remove old items
+        for (MenuItem mi : this.menuFile.getItems()) {
+            if (mi.getData() instanceof File) {
+                mi.dispose();
+            }
+        }
+
+        // add new items.
+        int i = RECENT_FILE_LIST_INDEX;
+        for (File f : recentFileList) {
+            MenuItem mi = new MenuItem(this.menuFile, SWT.PUSH, i++);
+            mi.setText(f.getAbsolutePath());
+            mi.setData(f);
+            mi.addSelectionListener(new SelectionAdapter() {
+                @Override
+                public void widgetSelected(SelectionEvent e) {
+                    openRecentFile((MenuItem) e.getSource());
+                }
+            });
+        }
+    }
+
+    /**
+     * adds a file to the recent working list.
+     * @param f the file to add.
+     */
+    private void addRecentFile(File f) {
+        if (f == NEW_FILE) {
+            return;
+        }
+        Preferences pref = Preferences.userRoot();
+
+        // create new list
+        List<File> recentFileList = getRecentFileList();
+        recentFileList.add(0, f);
+
+        // remove duplicates
+        Set<String> newList = new LinkedHashSet<String>();
+        for (File file : recentFileList) {
+            newList.add(file.getAbsolutePath());
+        }
+        recentFileList.clear();
+        for (String str : newList) {
+            recentFileList.add(new File(str));
+        }
+
+        // set preferences.
+        int i = 0;
+        for (File recentFile : recentFileList) {
+            pref.put(PREF_RECENT_PREFIX + Integer.toString(i++), recentFile
+                    .getAbsolutePath());
+        }
+        pref.put(PREF_RECENT_PREFIX + Integer.toString(i++), "");
+    }
+
+    /**
+     * gets the recent file list.
+     * @return the recent file list.
+     */
+    private List<File> getRecentFileList() {
+        Preferences pref = Preferences.userRoot();
+        List<File> results = new ArrayList<File>();
+        for (int i = 0; i < RECENT_FILE_COUNT; i++) {
+            String t = pref.get(PREF_RECENT_PREFIX + Integer.toString(i), null);
+            if (t == null || "".equals(t)) {
+                break;
+            }
+            File f = new File(t);
+            results.add(f);
+        }
+        return results;
+    }
+
+    /**
+     * check if the current document has been modified.
+     * @return true, if is modified. false, if not.
+     */
+    private boolean isModified() {
+        return this.modified;
     }
 
     /**
