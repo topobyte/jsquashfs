@@ -80,6 +80,11 @@ public class JSquashFSGUI {
     private Manifest manifest;
 
     /**
+     * the current working file.
+     */
+    private File workingFile;
+
+    /**
      * constructor.
      * @param args the command line arguments.
      */
@@ -90,7 +95,7 @@ public class JSquashFSGUI {
         this.shell = new Shell(this.display);
         this.shell.setLayout(new FillLayout());
 
-        this.shell.setText(SquashFSGlobals.PROJECT_NAME + " GUI");
+        setWorkingFileName(null, false);
 
         createMenu();
 
@@ -105,8 +110,13 @@ public class JSquashFSGUI {
                     this.display.sleep();
                 }
             } catch (Throwable e) {
-                // TODO catch and display error.
                 log.error("error", e);
+                MessageBox mb = new MessageBox(this.shell, SWT.OK
+                        | SWT.ICON_ERROR);
+                mb.setText("Critical Error");
+                mb.setMessage("Critical Error\n\n"
+                        + GUIUtils.exceptionToString(e));
+                mb.open();
             }
         }
         this.display.dispose();
@@ -180,6 +190,7 @@ public class JSquashFSGUI {
                 Manifest man = SquashFSManifest.load(new FileInputStream(f), f
                         .getParentFile());
                 this.content.loadManifest(man);
+                setWorkingFileName(f, false);
             } catch (Exception e1) {
                 try {
                     File destFile = File.createTempFile("jsquashfs", "dir");
@@ -197,16 +208,38 @@ public class JSquashFSGUI {
                     Manifest man = SquashFSManifest.load(new FileInputStream(
                             manifestFile), manifestFile.getParentFile());
                     this.content.loadManifest(man);
+                    setWorkingFileName(f, false);
                 } catch (Exception e2) {
                     MessageBox mb = new MessageBox(this.shell, SWT.OK
                             | SWT.ICON_ERROR);
                     mb.setText("Error Loading");
                     mb.setMessage("Error Loading\n" + e2.getMessage());
+                    mb.open();
                 }
             } finally {
                 this.shell.setCursor(this.CURSOR_ARROW);
             }
         }
+    }
+
+    /**
+     * sets the working file name.
+     * @param workingFileName name of the working file.
+     * @param modified the modified status.
+     */
+    private void setWorkingFileName(File workingFile, boolean modified) {
+        this.workingFile = workingFile;
+        StringBuffer txt = new StringBuffer();
+        txt.append(SquashFSGlobals.PROJECT_NAME);
+        txt.append(" GUI");
+        if (workingFile != null) {
+            txt.append(" - ");
+            txt.append(workingFile.getAbsolutePath());
+            if (modified) {
+                txt.append("*");
+            }
+        }
+        this.shell.setText(txt.toString());
     }
 
     /**
