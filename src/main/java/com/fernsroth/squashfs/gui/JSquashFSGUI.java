@@ -217,8 +217,8 @@ public class JSquashFSGUI {
      * @param mi the menu item containing the recent file.
      */
     protected void openRecentFile(MenuItem mi) {
-        // TODO Auto-generated method stub
-
+        File f = (File) mi.getData();
+        openFile(f);
     }
 
     /**
@@ -243,42 +243,50 @@ public class JSquashFSGUI {
                 "Manifest Files (*.xml)", "Modules (*.mo)" });
         String fileName;
         if ((fileName = fd.open()) != null) {
-            this.shell.setCursor(this.CURSOR_HOURGLASS);
             File f = new File(fileName);
+            openFile(f);
+        }
+    }
 
+    /**
+     * open a file.
+     * @param fileToOpen the file to open.
+     */
+    private void openFile(File fileToOpen) {
+        this.shell.setCursor(this.CURSOR_HOURGLASS);
+
+        try {
+            Manifest man = SquashFSManifest
+                    .load(new FileInputStream(fileToOpen), fileToOpen
+                            .getParentFile());
+            this.content.loadManifest(man);
+            setWorkingFileName(fileToOpen, false);
+        } catch (Exception e1) {
             try {
-                Manifest man = SquashFSManifest.load(new FileInputStream(f), f
-                        .getParentFile());
-                this.content.loadManifest(man);
-                setWorkingFileName(f, false);
-            } catch (Exception e1) {
-                try {
-                    File destFile = File.createTempFile("jsquashfs", "dir");
-                    destFile.delete();
-                    destFile.mkdirs();
-                    SquashFSReader reader = new SquashFSReader(
-                            new EasyIORandomAccessFile(f, "r"));
-                    OutputWalkHandler out = new OutputWalkHandler(reader,
-                            destFile);
-                    out.setIncludeMTimeInManfest(false);
-                    SquashFSUtils.walk(reader.getRootDirectory(), out);
-                    File manifestFile = new File(destFile, "manifest.xml");
-                    out.writeManifest(manifestFile);
+                File destFile = File.createTempFile("jsquashfs", "dir");
+                destFile.delete();
+                destFile.mkdirs();
+                SquashFSReader reader = new SquashFSReader(
+                        new EasyIORandomAccessFile(fileToOpen, "r"));
+                OutputWalkHandler out = new OutputWalkHandler(reader, destFile);
+                out.setIncludeMTimeInManfest(false);
+                SquashFSUtils.walk(reader.getRootDirectory(), out);
+                File manifestFile = new File(destFile, "manifest.xml");
+                out.writeManifest(manifestFile);
 
-                    Manifest man = SquashFSManifest.load(new FileInputStream(
-                            manifestFile), manifestFile.getParentFile());
-                    this.content.loadManifest(man);
-                    setWorkingFileName(f, false);
-                } catch (Exception e2) {
-                    MessageBox mb = new MessageBox(this.shell, SWT.OK
-                            | SWT.ICON_ERROR);
-                    mb.setText("Error Loading");
-                    mb.setMessage("Error Loading\n" + e2.getMessage());
-                    mb.open();
-                }
-            } finally {
-                this.shell.setCursor(this.CURSOR_ARROW);
+                Manifest man = SquashFSManifest.load(new FileInputStream(
+                        manifestFile), manifestFile.getParentFile());
+                this.content.loadManifest(man);
+                setWorkingFileName(fileToOpen, false);
+            } catch (Exception e2) {
+                MessageBox mb = new MessageBox(this.shell, SWT.OK
+                        | SWT.ICON_ERROR);
+                mb.setText("Error Loading");
+                mb.setMessage("Error Loading\n" + e2.getMessage());
+                mb.open();
             }
+        } finally {
+            this.shell.setCursor(this.CURSOR_ARROW);
         }
     }
 
