@@ -329,7 +329,7 @@ public class PropertiesGeneralTab implements PropertiesDialog.PropertyTab {
                 }
 
                 // apply uid
-                if (guid != null) {
+                if (uid != null) {
                     bf.setUid(uid);
                 }
 
