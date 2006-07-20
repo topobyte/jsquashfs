@@ -10,11 +10,15 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
@@ -140,6 +144,16 @@ public class FileTable extends Table {
         tc.addSelectionListener(new FileTableSelectionAdapter(
                 FileTable.COLUMN_MTIME));
 
+        addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseUp(MouseEvent e) {
+                if (e.button == 3) {
+                    showFileTableContextMenu();
+                }
+            }
+        });
+
         setHeaderVisible(true);
     }
 
@@ -164,6 +178,9 @@ public class FileTable extends Table {
      * reload the table items.
      */
     private void reloadTable() {
+        // save selection data.
+        List<BaseFile> selectionData = getSelectedData();
+
         this.removeAll();
         if (this.tableItems == null) {
             return;
@@ -195,6 +212,55 @@ public class FileTable extends Table {
                 ti.setImage(this.linkImage);
             }
         }
+
+        // restore selection items
+        List<TableItem> selectedTableItems = getTableItems(selectionData);
+        setSelection(selectedTableItems
+                .toArray(new TableItem[selectedTableItems.size()]));
+    }
+
+    /**
+     * gets a list of table items from a list of data.
+     * @param dataList the data to find.
+     * @return the list of table items.
+     */
+    private List<TableItem> getTableItems(List<BaseFile> dataList) {
+        List<TableItem> results = new ArrayList<TableItem>();
+        for (BaseFile bf : dataList) {
+            TableItem ti = findData(bf);
+            if (ti != null) {
+                results.add(ti);
+            }
+        }
+        return results;
+    }
+
+    /**
+     * find a table item from the data.
+     * @param bf the data to find.
+     * @return the table item. null, if not found.
+     */
+    private TableItem findData(BaseFile bf) {
+        for (TableItem ti : getItems()) {
+            if (ti.getData() == bf) {
+                return ti;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * gets the list of selected data.
+     * @return the list of selected data.
+     */
+    private List<BaseFile> getSelectedData() {
+        List<BaseFile> results = new ArrayList<BaseFile>();
+        TableItem[] selection = this.getSelection();
+        for (TableItem ti : selection) {
+            BaseFile bf = (BaseFile) ti.getData();
+            results.add(bf);
+        }
+        return results;
     }
 
     /**
@@ -207,6 +273,42 @@ public class FileTable extends Table {
         this.tableItems = new ArrayList<BaseFile>();
         this.tableItems.addAll(tableItems);
         reloadTable();
+    }
+
+    /**
+     * show the file table context menu.
+     * @param location the location to show it at.
+     */
+    protected void showFileTableContextMenu() {
+        MenuItem mi;
+        Menu popupMenu = new Menu(this.getShell(), SWT.POP_UP);
+
+        mi = new MenuItem(popupMenu, SWT.PUSH);
+        mi.setText("Properties");
+        mi.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                List<BaseFile> selected = new ArrayList<BaseFile>();
+                for (TableItem ti : FileTable.this.getSelection()) {
+                    selected.add((BaseFile) ti.getData());
+                }
+                showProperties(selected);
+            }
+        });
+
+        popupMenu.setVisible(true);
+    }
+
+    /**
+     * show the properties dialog for the base files.
+     * @param selected the file to show properties dialog for.
+     */
+    protected void showProperties(List<BaseFile> selected) {
+        PropertiesDialog dialog = new PropertiesDialog(this.getShell(),
+                SWT.APPLICATION_MODAL, selected);
+        if (dialog.open()) {
+            reloadTable();
+        }
     }
 
     /**

@@ -9,16 +9,18 @@ import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TreeEditor;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
@@ -67,14 +69,38 @@ public class FolderTree extends Tree {
         in = getClass().getResourceAsStream("openFolder.ico");
         this.folderImageOpen = new Image(parent.getDisplay(), new ImageData(in));
 
+        addKeyListener(new KeyAdapter() {
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void keyPressed(KeyEvent e) {
+                super.keyPressed(e);
+                if (e.keyCode == SWT.F2) {
+                    Tree t = (Tree) e.widget;
+                    for (TreeItem ti : t.getSelection()) {
+                        editTreeItem(ti);
+                        break;
+                    }
+                }
+            }
+        });
+
         addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
+                editTreeItem(null);
                 onTreeItemSelected(e);
             }
         });
 
         addMouseListener(new MouseAdapter() {
+            /**
+             * the last mouse up item.
+             */
+            private TreeItem lastMouseUpItem;
+
             @Override
             public void mouseDoubleClick(MouseEvent e) {
                 Tree t = (Tree) e.widget;
@@ -85,14 +111,17 @@ public class FolderTree extends Tree {
 
             @Override
             public void mouseUp(MouseEvent e) {
-                /*
-                 Tree t = (Tree) e.widget;
-                 for (TreeItem ti : t.getSelection()) {
-                 if (ti == previousMouseUpItem) {
-                 editTreeItem(ti);
-                 }
-                 }
-                 */
+                Tree t = (Tree) e.widget;
+                TreeItem clickedItem = t.getItem(new Point(e.x, e.y));
+                if (clickedItem != null) {
+                    if (this.lastMouseUpItem == clickedItem) {
+                        editTreeItem(clickedItem);
+                    }
+                    this.lastMouseUpItem = clickedItem;
+                } else {
+                    editTreeItem(null);
+                    this.lastMouseUpItem = null;
+                }
             }
         });
 
@@ -133,6 +162,15 @@ public class FolderTree extends Tree {
         // Clean up any previous editor control
         Control oldEditor = this.treeEditor.getEditor();
         if (oldEditor != null) {
+            TreeItem treeItem = this.treeEditor.getItem();
+            Text text = (Text) this.treeEditor.getEditor();
+            if (!validateEdit(treeItem, text.getText())) {
+                text.setFocus();
+                text.setSelection(0, text.getText().length());
+                return;
+            }
+            performEdit(treeItem, text.getText());
+
             oldEditor.dispose();
         }
 
@@ -142,20 +180,21 @@ public class FolderTree extends Tree {
         }
 
         // The control that will be the editor must be a child of the Tree
-        Text newEditor = new Text(this, SWT.NONE);
-        newEditor.setText(ti.getText());
-        newEditor.addModifyListener(new ModifyListener() {
+        Text newEditor = new Text(this, SWT.SINGLE);
+        newEditor.addKeyListener(new KeyAdapter() {
+
             /**
              * {@inheritDoc}
              */
-            public void modifyText(ModifyEvent e) {
-                TreeItem treeItem = FolderTree.this.treeEditor.getItem();
-                Text text = (Text) FolderTree.this.treeEditor.getEditor();
-                if (validateEdit(treeItem, text.getText())) {
-                    performEdit(treeItem, text.getText());
+            @Override
+            public void keyPressed(KeyEvent e) {
+                super.keyPressed(e);
+                if (e.keyCode == 13) {
+                    editTreeItem(null);
                 }
             }
         });
+        newEditor.setText(ti.getText());
         newEditor.selectAll();
         newEditor.setFocus();
         this.treeEditor.setEditor(newEditor, ti);
@@ -168,6 +207,8 @@ public class FolderTree extends Tree {
      */
     protected void performEdit(TreeItem treeItem, String text) {
         treeItem.setText(text);
+        Directory dir = (Directory) treeItem.getData();
+        dir.setName(text);
     }
 
     /**
@@ -177,6 +218,43 @@ public class FolderTree extends Tree {
      * @return true, if ok. false, if bad.
      */
     protected boolean validateEdit(TreeItem treeItem, String text) {
+        TreeItem parentTreeItem = treeItem.getParentItem();
+
+        // can't edit root name.
+        if (parentTreeItem == null) {
+            return false;
+        }
+
+        Directory parentDir = (Directory) parentTreeItem.getData();
+        Directory dir = (Directory) treeItem.getData();
+
+        // check for blank
+        if (text.length() == 0) {
+            MessageBox mb = new MessageBox(this.getShell(), SWT.OK
+                    | SWT.ICON_ERROR);
+            mb.setText("Error Naming File");
+            mb.setMessage("Filename must contain at least one character.");
+            mb.open();
+            return false;
+        }
+
+        // check for duplicate name
+        for (BaseFile childDir : parentDir.getSubentries()) {
+            if (childDir != dir) {
+                if (childDir.getName().equals(text)) {
+                    MessageBox mb = new MessageBox(this.getShell(), SWT.OK
+                            | SWT.ICON_ERROR);
+                    mb.setText("Error Naming File");
+                    mb.setMessage("File with name '" + text
+                            + "' already exists.");
+                    mb.open();
+                    return false;
+                }
+            }
+        }
+
+        // TODO check valid unix name.
+
         return true;
     }
 

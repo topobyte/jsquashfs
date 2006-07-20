@@ -3,23 +3,18 @@
  */
 package com.fernsroth.squashfs.gui;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.TreeItem;
 
-import com.fernsroth.squashfs.model.BaseFile;
 import com.fernsroth.squashfs.model.Directory;
 import com.fernsroth.squashfs.model.Manifest;
 
@@ -38,11 +33,6 @@ public class ContentComposite extends SashForm {
      * file table showing the files in the selected folder.
      */
     private FileTable fileTable;
-
-    /**
-     * the loaded manifest.
-     */
-    private Manifest loadedManifest;
 
     /**
      * @param parent the parent shell.
@@ -81,12 +71,6 @@ public class ContentComposite extends SashForm {
                 }
             }
 
-            @Override
-            public void mouseUp(MouseEvent e) {
-                if (e.button == 3) {
-                    showFileTableContextMenu();
-                }
-            }
         });
 
         this.setWeights(new int[] { 20, 80 });
@@ -95,68 +79,33 @@ public class ContentComposite extends SashForm {
     }
 
     /**
-     * show the file table context menu.
-     * @param location the location to show it at.
-     */
-    protected void showFileTableContextMenu() {
-        MenuItem mi;
-        Menu popupMenu = new Menu(this.fileTable.getShell(), SWT.POP_UP);
-
-        mi = new MenuItem(popupMenu, SWT.PUSH);
-        mi.setText("Properties");
-        mi.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                List<BaseFile> selected = new ArrayList<BaseFile>();
-                for (TableItem ti : ContentComposite.this.fileTable
-                        .getSelection()) {
-                    selected.add((BaseFile) ti.getData());
-                }
-                showProperties(selected);
-            }
-        });
-
-        popupMenu.setVisible(true);
-    }
-
-    /**
-     * show the properties dialog for the base files.
-     * @param selected the file to show properties dialog for.
-     */
-    protected void showProperties(List<BaseFile> selected) {
-        PropertiesDialog dialog = new PropertiesDialog(this.getShell(),
-                SWT.APPLICATION_MODAL, selected);
-        if (dialog.open()) {
-            reload();
-        }
-    }
-
-    /**
      * reload the data in the file table and folder tree.
      */
-    private void reload() {
-        int[] fileTableSelection = this.fileTable.getSelectionIndices();
-        TreeItem[] folderTreeSelection = this.folderTree.getSelection();
-        Directory[] folderTreeBaseFileSelection = new Directory[folderTreeSelection.length];
-        for (int i = 0; i < folderTreeSelection.length; i++) {
-            folderTreeBaseFileSelection[i] = (Directory) folderTreeSelection[i]
-                    .getData();
-        }
+    /* TODO is this function needed?
+     private void reload() {
+     int[] fileTableSelection = this.fileTable.getSelectionIndices();
+     TreeItem[] folderTreeSelection = this.folderTree.getSelection();
+     Directory[] folderTreeBaseFileSelection = new Directory[folderTreeSelection.length];
+     for (int i = 0; i < folderTreeSelection.length; i++) {
+     folderTreeBaseFileSelection[i] = (Directory) folderTreeSelection[i]
+     .getData();
+     }
 
-        loadManifest(this.loadedManifest);
+     loadManifest(this.loadedManifest);
 
-        folderTreeSelection = this.folderTree.findTreeItems(
-                this.folderTree.getItems()[0], folderTreeBaseFileSelection)
-                .toArray(new TreeItem[] {});
-        for (TreeItem ti : folderTreeSelection) {
-            this.folderTree.expandToItem(ti);
-        }
-        this.folderTree.setSelection(folderTreeSelection);
-        if (folderTreeSelection.length > 0) {
-            selectItem(folderTreeBaseFileSelection[0], null);
-        }
-        this.fileTable.setSelection(fileTableSelection);
-    }
+     folderTreeSelection = this.folderTree.findTreeItems(
+     this.folderTree.getItems()[0], folderTreeBaseFileSelection)
+     .toArray(new TreeItem[] {});
+     for (TreeItem ti : folderTreeSelection) {
+     this.folderTree.expandToItem(ti);
+     }
+     this.folderTree.setSelection(folderTreeSelection);
+     if (folderTreeSelection.length > 0) {
+     selectItem(folderTreeBaseFileSelection[0], null);
+     }
+     this.fileTable.setSelection(fileTableSelection);
+     }
+     */
 
     /**
      * select an item from the tree.
@@ -193,6 +142,5 @@ public class ContentComposite extends SashForm {
         if (manifest != null) {
             this.folderTree.setRoot(manifest.getRoot());
         }
-        this.loadedManifest = manifest;
     }
 }
