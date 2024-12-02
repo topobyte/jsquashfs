@@ -10,6 +10,7 @@ import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
@@ -394,17 +395,17 @@ public class PropertiesGeneralTab implements PropertiesDialog.PropertyTab {
         /**
          * the read checkbox.
          */
-        private TristateButton buttonRead;
+        private Button buttonRead;
 
         /**
          * the write checkbox.
          */
-        private TristateButton buttonWrite;
+        private Button buttonWrite;
 
         /**
          * the execute checkbox.
          */
-        private TristateButton buttonExecute;
+        private Button buttonExecute;
 
         /**
          * constructor.
@@ -418,13 +419,13 @@ public class PropertiesGeneralTab implements PropertiesDialog.PropertyTab {
             Label lbl = new Label(this, 0);
             lbl.setText(modeName);
 
-            this.buttonRead = new TristateButton(this, SWT.CHECK);
+            this.buttonRead = new Button(this, SWT.CHECK);
             this.buttonRead.setText("Read");
 
-            this.buttonWrite = new TristateButton(this, SWT.CHECK);
+            this.buttonWrite = new Button(this, SWT.CHECK);
             this.buttonWrite.setText("Write");
 
-            this.buttonExecute = new TristateButton(this, SWT.CHECK);
+            this.buttonExecute = new Button(this, SWT.CHECK);
             this.buttonExecute.setText("Execute");
 
             pack();
